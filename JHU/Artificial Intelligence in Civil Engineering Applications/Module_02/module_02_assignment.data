@@ -1,0 +1,83 @@
+Name:
+Austrian Geotechnical Laboratory Test Dataset. The same data is also mirrored on Zenodo as “Dataset for ‘Machine learning predictions on an extensive geotechnical dataset of laboratory tests in Austria’.”
+
+Descriptions:
+This dataset contains more than 20 years of geotechnical laboratory testing data collected mainly from Vienna, Lower Austria, and Burgenland. The public description says it includes 24 core features from particle size distribution, Atterberg limits, Proctor tests, permeability tests, and direct shear tests, plus location information for a subset of samples. It is intended for geotechnical research, education, correlation analysis, predictive modeling, and design-related work.
+
+Variables Description:
+Based on the downloadable CSV and standard geotechnical notation, the variables can be read as follows:
+
+Location: sampling or site location name
+
+Co: coarse fraction / cobbles-stones percentage
+
+Gr: gravel percentage
+
+Sa: sand percentage
+
+Si: silt percentage
+
+Cl: clay percentage
+
+dmax: maximum grain size
+
+CU: coefficient of uniformity
+
+CC: coefficient of curvature
+
+d10: effective grain size
+
+d50: median grain size
+
+RHS: density-related soil/solid parameter, likely particle density
+
+RHPRUSP: Proctor-related density parameter, likely dry density
+
+WPRUSP: Proctor-related water-content parameter, likely optimum moisture content
+
+wL: liquid limit
+
+wP: plastic limit
+
+wS: shrinkage limit
+
+IP: plasticity index
+
+w: natural water content
+
+IC: consistency index
+
+IA: activity index
+
+k10: hydraulic conductivity / permeability at 10°C
+
+c: cohesion
+
+phi: friction angle
+
+cr: residual cohesion
+
+phir: residual friction angle
+
+Latitude: site latitude
+
+Longitude: site longitude
+
+The dataset page itself describes the test families, but not a full published column-by-column dictionary; the list above comes from inspecting the CSV header and matching the abbreviations to standard geotechnical usage. The test families confirmed by the source are particle size distribution, Atterberg limits, Proctor, permeability, and direct shear testing.
+
+Sources:
+Kaggle dataset page: Austrian Geotechnical Laboratory Test Dataset.
+Zenodo mirror and DOI record: Dataset for “Machine learning predictions on an extensive geotechnical dataset of laboratory tests in Austria”.
+I also checked the downloadable CSV file linked from the Zenodo record, Zenodo_DATA_Soranzo.csv, to verify the actual row count, columns, and missing-data pattern.
+
+Summary Statistics:
+From the downloadable CSV, the dataset has 1,066 rows and 28 columns. It contains 27 numeric columns and 1 text column (Location). The particle-size columns are among the most populated, with 719 non-null values each for Co, Gr, Sa, Si, Cl, and dmax. Location is available for 711 rows, and Latitude and Longitude are available for 646 rows each. Selected median values from the file are approximately: Gr = 1.87, Sa = 12.01, Si = 56.67, Cl = 20.57, dmax = 8.00, RHS = 2.75, c = 5.9, phi = 31.85, phir = 31.3, and k10 = 2.795e-10. The public dataset description says there are 24 core variables, while the current CSV loads with 28 columns, which is consistent with the inclusion of location fields in the file.
+
+Columns:
+Location, Co, Gr, Sa, Si, Cl, dmax, CU, CC, d10, d50, RHS, RHPRUSP, WPRUSP, wL, wP, wS, IP, w, IC, IA, k10, c, phi, cr, phir, Latitude, Longitude.
+
+Missing Data Existence:
+Yes. Missing data is substantial. From the CSV I inspected, the columns with the most missing values are w (96.7% missing), IA (94.8%), IC (93.6%), d10 (92.7%), wS (92.1%), and wL, wP, IP (each 91.7% missing). Even Latitude and Longitude are missing in 39.4% of rows. The Zenodo description also notes that previous studies using this dataset applied KNN imputation for missing values and LOF-based anomaly detection.
+---------------------------------
+
+!wget -q -O geotech.csv "https://raw.githubusercontent.com/mhrafiei/data/main/geotech.csv"
