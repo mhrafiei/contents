@@ -1,0 +1,169 @@
+Dataset Name:
+preservation_rehabilitation_cost_ratio_dataset
+
+Problem Statement:
+This dataset is a synthetic preservation engineering dataset for a beginner regression task. The goal is to predict the conceptual Rehabilitation_Cost_Ratio for existing buildings being evaluated for rehabilitation, restoration, or adaptive reuse. The ratio is defined as the estimated rehabilitation cost divided by the estimated current replacement cost of the building.
+
+Target Variable:
+- Rehabilitation_Cost_Ratio
+  Description: Planning-level ratio of total rehabilitation cost to current replacement cost.
+  Unit: unitless ratio
+  Observed synthetic range: 0.12 to 0.801
+
+Dataset Size:
+- Rows: 1000
+- Input features: 13
+- Output variables: 1
+- Missing values in target column: 0
+
+Feature List:
+1. Building_Age_Years
+   Description: Age of the building at the time of assessment.
+   Unit: years
+   Expected synthetic range: 25 to 176
+
+2. Gross_Floor_Area_m2
+   Description: Gross enclosed floor area of the building used for planning-level normalization and scale effects.
+   Unit: m2
+   Expected synthetic range: 450.0 to 22000.0
+
+3. Number_of_Stories
+   Description: Total number of above-grade stories.
+   Unit: count
+   Expected synthetic range: 1 to 12
+
+4. Structural_Condition_Index
+   Description: Overall structural condition score from inspection, where higher values indicate better condition.
+   Unit: index from 0 to 100
+   Expected synthetic range: 41.96 to 98.0
+
+5. Deteriorated_Structural_Element_Share_pct
+   Description: Percent of primary structural elements requiring moderate or major repair based on inspection.
+   Unit: percent
+   Expected synthetic range: 0.0 to 48.0
+
+6. Moisture_Intrusion_Severity_Score
+   Description: Inspection-based severity score for chronic moisture intrusion affecting structural or envelope-adjacent components.
+   Unit: score from 0 to 10
+   Expected synthetic range: 0.0 to 7.73
+
+7. Differential_Settlement_mm
+   Description: Estimated differential settlement that is significant enough to influence cracking, alignment, and rehabilitation scope.
+   Unit: mm
+   Expected synthetic range: 4.28 to 47.31
+
+8. Lateral_Load_Upgrade_Demand_Score
+   Description: Composite score representing the likely extent of lateral-force-resisting system upgrades required for modern seismic or wind expectations.
+   Unit: score from 0 to 10
+   Expected synthetic range: 1.05 to 8.23
+
+9. Code_Compliance_Gap_Score
+   Description: Composite score for the magnitude of code-related deficiencies relevant to rehabilitation and adaptive reuse, including structural, fire-life-safety, and accessibility implications at planning level.
+   Unit: score from 0 to 10
+   Expected synthetic range: 0.0 to 9.11
+
+10. Heritage_Intervention_Constraint_Score
+    Description: Ordinal score for the extent to which historic significance, preservation review, and in-kind treatment requirements constrain intervention options.
+    Unit: score from 0 to 5
+    Expected synthetic range: 0 to 5
+
+11. Planned_Occupancy_Change_Intensity_Score
+    Description: Planning score for the intensity of proposed occupancy change and associated fit-out or loading implications.
+    Unit: score from 0 to 10
+    Expected synthetic range: 0.0 to 10.0
+
+12. Hazardous_Materials_Abatement_Area_pct
+    Description: Percent of building area expected to require hazardous materials abatement, such as asbestos-containing materials or lead-related treatment.
+    Unit: percent
+    Expected synthetic range: 0.0 to 45.0
+
+13. Years_Since_Last_Major_Rehabilitation
+    Description: Number of years since the last major rehabilitation affecting structural or major building systems.
+    Unit: years
+    Expected synthetic range: 1 to 143
+
+How the Synthetic Data Was Constructed:
+1. Building stock generation:
+   Buildings were generated from three broad era groups: pre-war historic stock, mid-century stock, and later twentieth-century stock. Building age influences likely heritage constraints, code gaps, hazardous materials prevalence, and upgrade demand, but not in a perfectly deterministic way.
+
+2. Geometry generation:
+   Number of stories and gross floor area were generated from era-sensitive distributions so that low-rise historic buildings, mid-rise mid-century buildings, and a mix of low-rise and taller later buildings are all represented.
+
+3. Latent condition drivers:
+   Unobserved but realistic latent factors were introduced, including maintenance quality, moisture exposure, and foundation or soil susceptibility. These latent variables influence observed inspection features such as moisture severity, settlement, deterioration share, and overall condition.
+
+4. Inspection-derived features:
+   Structural_Condition_Index decreases as deterioration, moisture severity, settlement, age, and time since major rehabilitation increase. Deteriorated_Structural_Element_Share_pct increases with higher moisture severity, larger settlement, poorer maintenance, and longer time since major rehabilitation.
+
+5. Rehabilitation planning features:
+   Lateral_Load_Upgrade_Demand_Score is higher for older and taller buildings, reflecting the greater likelihood of upgrades to the lateral system. Code_Compliance_Gap_Score increases with age, building height, and planned occupancy change intensity. Hazardous_Materials_Abatement_Area_pct is more common in older and especially mid-century buildings.
+
+6. Target construction:
+   Rehabilitation_Cost_Ratio was computed as a nonlinear function of condition, deterioration, moisture, settlement, code gap, lateral upgrade demand, heritage constraints, occupancy change intensity, hazardous materials, and time since rehabilitation. Moderate random noise was added so the dataset is realistic and educational rather than perfectly deterministic. Larger buildings tend to show a mild economy-of-scale effect on the ratio, while interactions such as moisture with deterioration, heritage constraints with occupancy change, and code gap with lateral upgrade demand increase cost intensity.
+
+Engineering Logic Behind the Relationships:
+- Older buildings are more likely to have preservation constraints, larger code gaps, and greater lateral upgrade needs.
+- Poorer structural condition increases the expected rehabilitation scope.
+- Chronic moisture problems accelerate deterioration in older structures and raise repair scope.
+- Differential settlement raises the likelihood of cracking, misalignment, and foundation-related intervention.
+- More intense occupancy change typically increases the retrofit scope and code compliance effort.
+- Hazardous materials abatement raises direct cost and sequencing complexity.
+- Heritage constraints increase labor intensity, review time, and the need for specialized repair methods.
+- Larger floor area reduces the rehabilitation cost ratio slightly because replacement-cost normalization and scale effects temper the ratio.
+
+Missing Data Strategy:
+Each input feature was assigned independent random missingness between 5% and 10%. Missing values are represented as NaN in the CSV file. The target column contains no missing values because the teaching objective is a supervised regression workflow in which students can practice imputing incomplete predictors while still training and evaluating models against a complete target.
+
+Exact Missingness by Input Feature:
+- Building_Age_Years: 59 missing values (5.9%)
+- Gross_Floor_Area_m2: 82 missing values (8.2%)
+- Number_of_Stories: 73 missing values (7.3%)
+- Structural_Condition_Index: 69 missing values (6.9%)
+- Deteriorated_Structural_Element_Share_pct: 68 missing values (6.8%)
+- Moisture_Intrusion_Severity_Score: 90 missing values (9.0%)
+- Differential_Settlement_mm: 95 missing values (9.5%)
+- Lateral_Load_Upgrade_Demand_Score: 59 missing values (5.9%)
+- Code_Compliance_Gap_Score: 83 missing values (8.3%)
+- Heritage_Intervention_Constraint_Score: 65 missing values (6.5%)
+- Planned_Occupancy_Change_Intensity_Score: 98 missing values (9.8%)
+- Hazardous_Materials_Abatement_Area_pct: 96 missing values (9.6%)
+- Years_Since_Last_Major_Rehabilitation: 82 missing values (8.2%)
+
+Intended Educational Use:
+This dataset is intended for beginner civil engineering graduate students learning regression machine learning in a preservation engineering context. It is suitable for:
+- exploratory data analysis
+- missing-data handling and imputation
+- train/test splitting
+- feature scaling
+- correlation analysis
+- linear regression, ridge, lasso, decision tree, random forest, and gradient boosting regression
+- model comparison using MAE, RMSE, and R2
+- discussion of multicollinearity, nonlinear effects, and interaction terms
+
+Assumptions:
+- All buildings are candidates for rehabilitation, restoration, or adaptive reuse, so near-collapse and demolition-only cases were intentionally excluded.
+- The dataset represents planning-level assessment and cost screening, not final design or contractor bid pricing.
+- Scores on 0 to 10 and 0 to 5 scales are synthetic but intended to resemble professional assessment or planning indices commonly used in practice.
+- Regional labor-market variation, financing effects, and owner-specific procurement conditions are not explicitly modeled.
+- The data is synthetic and should be used for education, not for real project estimating.
+
+Reference Basis Used to Ground Ranges and Relationships:
+- National Park Service, Preservation Brief 39: Holding the Line, Controlling Unwanted Moisture in Historic Buildings
+  https://www.nps.gov/orgs/1739/upload/preservation-brief-39-controlling-moisture.pdf
+- National Park Service, Preservation Brief 47: Maintaining the Exteriors of Small and Medium-Size Historic Buildings
+  https://www.nps.gov/orgs/1739/upload/preservation-brief-47-exteriors-small-medium-buildings.pdf
+- National Park Service, Preservation Brief 43: The Preparation and Use of Historic Structure Reports
+  https://www.nps.gov/orgs/1739/upload/preservation-brief-43-historic-structure-reports.pdf
+- International Code Council, existing building code resources and change of occupancy provisions
+  https://codes.iccsafe.org/lookup/VRHC2012_Ch10_Sec1002
+  https://codes.iccsafe.org/content/PHXEBC2024P1/chapter-6-classification-of-work
+- FEMA, Seismic Building Codes
+  https://www.fema.gov/emergency-managers/risk-management/earthquake/seismic-building-codes
+- FEMA P-50-1, Seismic Retrofit Guidelines
+  https://www.fema.gov/sites/default/files/documents/fema_p-50-1-seismic-retrofit-guidelines-8252021.pdf
+- U.S. EPA, Information for Owners and Managers of Buildings that Contain Asbestos
+  https://www.epa.gov/asbestos/information-owners-and-managers-buildings-contain-asbestos
+- U.S. EPA, Asbestos-Containing Materials and Demolition
+  https://www.epa.gov/large-scale-residential-demolition/asbestos-containing-materials-acm-and-demolition
+- Whole Building Design Guide, The Use of Parametrics for Estimating Maintenance Costs
+  https://www.wbdg.org/resources/deferred-maintenance-use-parametrics-estimating-maintenance-costs

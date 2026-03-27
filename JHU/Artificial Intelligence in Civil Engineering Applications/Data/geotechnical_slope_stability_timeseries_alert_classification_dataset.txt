@@ -1,0 +1,204 @@
+Dataset Name:
+geotechnical_slope_stability_timeseries_alert_classification_dataset
+
+Problem Statement:
+This synthetic dataset is designed for teaching beginner civil engineering graduate students how to apply time-series multiclass classification methods to a realistic geotechnical engineering problem. The task is to predict the daily slope stability alert level of an instrumented soil slope using rainfall, groundwater response, moisture, suction, and movement measurements.
+
+Chosen Time-Series Classification Problem:
+Daily slope stability alert classification for a monitored soil slope.
+
+Why This Time-Series Theme Was Chosen:
+Slope monitoring is one of the clearest geotechnical settings where time-series behavior matters. Rainfall accumulates over several days, infiltration affects groundwater and pore pressure with lag, matric suction falls during wetting, and displacement can accelerate before higher-risk conditions. This makes the dataset suitable for beginner work in both geotechnical interpretation and time-aware machine learning.
+
+Time Index:
+Observation Date
+- Daily records from 2022-01-01 through 2025-12-31
+- Total rows: 1461
+
+Predictive Inputs:
+There are 12 measured or derived predictor features used for machine learning, plus 1 time index column.
+The time index is included for sequencing and is not counted toward the 12-feature predictor requirement.
+
+Target Variable:
+Slope Stability Alert Level
+
+Target Variable Definition:
+Slope Stability Alert Level is a five-class categorical variable representing the observed daily monitoring state of the slope. It is intended to mimic a practical monitoring or early-warning interpretation rather than a direct laboratory soil classification.
+
+Five Classes:
+1. Normal
+   Description: Dry to mildly moist conditions, relatively deep groundwater, low pore pressure response, and only background creep.
+   Typical engineering meaning: Stable monitoring state with no significant short-term concern.
+
+2. Elevated
+   Description: Early hydrologic response or small movement increase. Rainfall accumulation, moisture rise, shallow groundwater, or mild creep may be present.
+   Typical engineering meaning: Conditions should be observed more closely, but the slope is not yet in a strong warning state.
+
+3. Watch
+   Description: Sustained wetting and measurable movement response. Pore pressure and displacement indicators show moderate acceleration.
+   Typical engineering meaning: Geotechnical staff should evaluate trends carefully because the slope is moving out of background conditions.
+
+4. Warning
+   Description: High pore pressure or clear displacement acceleration, often associated with wet spells and reduced suction.
+   Typical engineering meaning: Short-term instability risk is significant and the site may require operational precautions or mitigation attention.
+
+5. Emergency
+   Description: Very rapid movement or a severe combined hydrologic and deformation response consistent with imminent or active instability.
+   Typical engineering meaning: Near-failure or active-failure conditions are plausible and immediate response would be justified in a real monitoring program.
+
+Class Distribution in This Dataset:
+- Normal: 516 rows
+- Elevated: 421 rows
+- Watch: 317 rows
+- Warning: 121 rows
+- Emergency: 86 rows
+
+Columns and Feature Definitions:
+
+1. Observation Date
+   Description: Daily timestamp for each monitoring record.
+   Unit: date
+   Expected Range: 2022-01-01 to 2025-12-31 (daily time index)
+
+2. Daily Rainfall (mm)
+   Description: Rainfall recorded during the current day by an on-site or nearby rain gauge.
+   Unit: mm
+   Expected Range: 0 to about 160
+
+3. Antecedent 3-Day Rainfall (mm)
+   Description: Rolling 3-day rainfall accumulation including the current day.
+   Unit: mm
+   Expected Range: 0 to about 250
+
+4. Antecedent 7-Day Rainfall (mm)
+   Description: Rolling 7-day rainfall accumulation including the current day.
+   Unit: mm
+   Expected Range: 0 to about 330
+
+5. Groundwater Depth Below Ground Surface (m)
+   Description: Depth from the ground surface to the groundwater level. Smaller values indicate shallower groundwater.
+   Unit: m
+   Expected Range: about 0.35 to 12.0
+
+6. Piezometric Head Above Slip Surface (m)
+   Description: Positive water head above an assumed critical shear zone or slip surface depth.
+   Unit: m
+   Expected Range: 0 to about 5.5
+
+7. Volumetric Water Content (%)
+   Description: Near-surface or shallow subsurface moisture content measured by monitoring sensors.
+   Unit: %
+   Expected Range: about 14 to 48
+
+8. Matric Suction (kPa)
+   Description: Unsaturated suction magnitude in the slope soil. Lower values generally indicate wetter, less stable conditions.
+   Unit: kPa
+   Expected Range: about 2 to 80
+
+9. Pore Pressure Ratio ru (-)
+   Description: Dimensionless pore pressure ratio used as a simplified index of hydrologic loading.
+   Unit: dimensionless
+   Expected Range: about 0.02 to 0.82
+
+10. Surface Displacement Rate (mm/day)
+    Description: Daily movement rate measured at the slope surface, representative of crest or surface marker motion.
+    Unit: mm/day
+    Expected Range: about 0.01 to 7.5
+
+11. 7-Day Cumulative Surface Displacement (mm)
+    Description: Rolling 7-day cumulative surface movement.
+    Unit: mm
+    Expected Range: about 0.02 to 40
+
+12. Inclinometer Shear Zone Movement Rate (mm/day)
+    Description: Daily subsurface movement rate near the interpreted shear zone from inclinometer monitoring.
+    Unit: mm/day
+    Expected Range: 0 to about 6.5
+
+13. Extensometer Extension Rate (mm/day)
+    Description: Daily extension rate measured by an extensometer or crack meter across the monitored ground.
+    Unit: mm/day
+    Expected Range: 0 to about 8.0
+
+14. Slope Stability Alert Level
+    Description: Target class for daily slope monitoring state.
+    Unit: categorical
+    Allowed Values: Normal, Elevated, Watch, Warning, Emergency
+
+How the Synthetic Data Was Constructed:
+- The dataset was built as a daily time series, not as independent random rows.
+- Daily rainfall was generated with seasonality and wet/dry persistence so that storm clusters occur naturally.
+- Antecedent 3-day and 7-day rainfall totals were computed directly from the daily rainfall series.
+- A latent wetness state with memory was used so that moisture, groundwater depth, piezometric head, and pore pressure respond gradually rather than instantaneously.
+- Volumetric water content rises during wet periods and tends to be lower during dry periods.
+- Groundwater depth becomes shallower as antecedent rainfall and wetness increase.
+- Piezometric head becomes positive when groundwater rises above a hidden critical slip-surface depth.
+- Matric suction decreases during wetting and tends to recover during dry spells.
+- Movement variables were generated from a nonlinear combination of rainfall accumulation, shallow groundwater, elevated pore pressure ratio, low suction, and prior movement state.
+- A hidden stability indicator inspired by factor-of-safety thinking was used together with displacement-based rules to assign the final alert class.
+- Random noise was added at each stage so that the classes overlap naturally and the classification problem is realistic rather than trivial.
+
+Engineering Logic Behind Class Assignment:
+The target class was not assigned by arbitrary random labeling. Instead, the alert level was based on a combination of:
+- short-term and antecedent rainfall loading
+- groundwater rise and piezometric response
+- increased volumetric water content
+- reduced matric suction in unsaturated soil
+- higher pore pressure ratio
+- accelerating surface and subsurface displacement
+A hidden stability indicator was used internally to reflect the fact that slopes become less stable when pore pressures rise, suction decreases, and movement accelerates. Higher alert levels occur when these responses appear together, especially during wet periods.
+
+Missing Data Strategy:
+- Every numeric predictor feature contains exactly 103 missing values out of 1461 rows.
+- This corresponds to approximately 7.05 percent missingness in each numeric predictor column.
+- Missingness was inserted independently and randomly by predictor column.
+- Missing values are represented as NaN in the CSV file.
+- The Observation Date column has no missing values.
+- The target column has no missing values.
+
+Why the Dataset Is Realistic:
+- The variables mirror instrumentation and environmental observations commonly used in slope monitoring programs.
+- Rainfall affects subsurface hydrology with lag, rather than instantaneously.
+- Higher moisture and shallower groundwater are associated with lower suction and higher pore pressure response.
+- Movement rates are generally low during dry periods and can accelerate during wet periods or when pore pressure becomes high.
+- Classes overlap because real slopes do not transition perfectly between discrete states.
+
+Intended Educational Use:
+This dataset is suitable for beginner machine learning exercises in geotechnical engineering, especially:
+- handling missing data and imputation
+- exploratory analysis of time-dependent geotechnical variables
+- plotting seasonal and storm-driven behavior
+- creating lag features and rolling statistics
+- using time-aware train/validation/test splits
+- comparing ordinary tabular classifiers with time-series aware approaches
+- evaluating multiclass classification performance with confusion matrices and class-wise metrics
+- discussing data leakage and the importance of preserving temporal order
+
+Assumptions:
+- The dataset represents one instrumented soil slope with daily observations over four years.
+- The slope is rainfall-sensitive and behaves as an unsaturated to variably saturated soil slope.
+- The hidden critical slip surface depth used for synthetic generation is approximately 5.3 m below ground surface.
+- The alert classes are intended for education and do not represent an official agency-specific warning protocol.
+- Values were rounded to practical engineering reporting precision.
+
+Reference Basis Used for Realism:
+1. U.S. Geological Survey, Monitoring page:
+   https://www.usgs.gov/programs/landslide-hazards/monitoring
+
+2. U.S. Geological Survey, Real-Time Monitoring for Potential Landslides:
+   https://www.usgs.gov/programs/landslide-hazards/science/real-time-monitoring-potential-landslides
+
+3. U.S. Geological Survey, A pore-pressure diffusion model for estimating landslide-inducing rainfall:
+   https://www.usgs.gov/publications/a-pore-pressure-diffusion-model-estimating-landslide-inducing-rainfall
+
+4. ASTM D6230, Standard Practices for Monitoring Earth or Structural Movement Using Inclinometers:
+   https://www.astm.org/d6230-21e01.html
+
+5. FHWA Federal Lands Highway, Geotechnical Technical Guidance Manual:
+   https://highways.dot.gov/federal-lands/pddm/geotechnical-tgm.pdf
+
+6. FHWA Federal Lands Highway, Chapter 6 Geotechnical guidance including slope stability factor-of-safety context:
+   https://highways.dot.gov/federal-lands/pddm/Chapter_06.pdf
+
+7. Development of Advanced Landslide Investigation Protocol and Monitoring Variables:
+   https://rosap.ntl.bts.gov/view/dot/68434/dot_68434_DS1.pdf

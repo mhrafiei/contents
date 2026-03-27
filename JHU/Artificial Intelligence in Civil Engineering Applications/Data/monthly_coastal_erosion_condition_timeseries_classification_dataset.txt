@@ -1,0 +1,233 @@
+Dataset Name
+monthly_coastal_erosion_condition_timeseries_classification_dataset
+
+Problem Statement
+This dataset is a synthetic panel time-series dataset for beginner machine learning education in Ocean and Coastal Engineering. The task is to classify the monthly coastal erosion condition of sandy shoreline segments using current hydrodynamic forcing, antecedent beach-dune morphology, sediment balance indicators, and recent shoreline response history.
+
+Dataset Summary
+- Domain: Civil Engineering
+- Focus area: Ocean and Coastal Engineering
+- Dataset type: Monthly panel time series (multiple shoreline segments observed repeatedly through time)
+- Time span: January 2022 to December 2024
+- Temporal resolution: Monthly
+- Number of shoreline segments: 40
+- Number of rows: 1440
+- Metadata columns: 2
+  1. Shoreline Segment ID
+  2. Observation Date
+- Number of predictive input features: 13
+- Number of output variables: 1
+- Output column: Monthly Coastal Erosion Condition Class
+- Missing values: present only in predictive input features, represented as NaN
+- Number of classes: 5
+
+Chosen Time-Series Classification Problem
+Monthly coastal erosion condition classification for sandy shoreline segments.
+
+Target Variable Definition
+Target name: Monthly Coastal Erosion Condition Class
+
+The target variable describes the interpreted monthly erosion state of a shoreline segment for a given observation month. It is intended to reflect how a coastal engineer might classify segment condition based on current wave and surge forcing, antecedent beach and dune morphology, sediment availability, vegetation, and recent shoreline movement.
+
+Class Definitions
+1. Recovery / Accreting
+   The shoreline segment is in a recovery-oriented month with net seaward adjustment or clear post-storm rebuilding tendencies. Typical indicators include positive monthly sediment balance, positive shoreline recovery tendency, and total water levels well below the dune crest.
+
+2. Stable Seasonal State
+   The shoreline segment is relatively stable during the month. Small seasonal fluctuations may occur, but forcing is not strong enough to drive notable erosive adjustment and the antecedent morphology remains protective.
+
+3. Mild Erosion Pressure
+   The segment is experiencing weak to moderate erosive stress. The shoreline may retreat modestly, sediment balance may be slightly negative, or the total water level may approach the dune crest margin without producing a severe event.
+
+4. Active Erosion
+   The segment is undergoing clear erosive adjustment during the month. This class is associated with stronger waves and surge, narrower antecedent beach conditions, negative sediment balance, and more substantial shoreline retreat.
+
+5. Severe Erosion Episode
+   The segment is in a highly erosive month, often associated with clustered storm forcing and total water levels that approach or exceed dune crest protection. This class represents the most damaging monthly condition in the dataset.
+
+Class Distribution
+- Recovery / Accreting: 253 rows (17.57%)
+- Stable Seasonal State: 411 rows (28.54%)
+- Mild Erosion Pressure: 434 rows (30.14%)
+- Active Erosion: 219 rows (15.21%)
+- Severe Erosion Episode: 123 rows (8.54%)
+
+Metadata Columns
+1. Shoreline Segment ID
+   Description: Identifier for the shoreline segment. Each segment has a repeated monthly record through time.
+   Unit: none
+   Notes: Metadata column, not counted among the 13 predictive input features.
+
+2. Observation Date
+   Description: Monthly observation date in ISO format.
+   Unit: YYYY-MM-DD
+   Notes: Metadata column, not counted among the 13 predictive input features.
+
+Predictive Feature List
+1. Significant Wave Height (m)
+   Description: Monthly representative significant wave height for the shoreline segment.
+   Unit: m
+   Expected range: 0.30 to 3.92
+
+2. Peak Wave Period (s)
+   Description: Monthly representative peak wave period associated with the wave climate.
+   Unit: s
+   Expected range: 4.50 to 12.99
+
+3. Mean Spring Tidal Range (m)
+   Description: Characteristic spring tidal range for the segment setting.
+   Unit: m
+   Expected range: 0.36 to 4.76
+
+4. Monthly Peak Storm Surge (m)
+   Description: Monthly peak storm surge indicator above mean sea level.
+   Unit: m
+   Expected range: 0.05 to 2.13
+
+5. Beach Width (m)
+   Description: Antecedent beach width at the start of the observation month.
+   Unit: m
+   Expected range: 8.00 to 120.21
+
+6. Beach Face Slope (-)
+   Description: Antecedent beach face or foreshore slope.
+   Unit: dimensionless
+   Expected range: 0.0150 to 0.0698
+
+7. Median Grain Size D50 (mm)
+   Description: Median surface sediment grain size.
+   Unit: mm
+   Expected range: 0.123 to 1.127
+
+8. Dune Crest Elevation (m)
+   Description: Antecedent dune crest elevation above mean sea level.
+   Unit: m
+   Expected range: 0.80 to 7.86
+
+9. Nearshore Bathymetric Slope (-)
+   Description: Nearshore seabed slope influencing wave transformation and dissipation.
+   Unit: dimensionless
+   Expected range: 0.0045 to 0.0477
+
+10. Monthly Sediment Budget Balance (m3/m/month)
+    Description: Net sediment gain or loss per meter of shoreline for the month. Negative values indicate deficit.
+    Unit: m3/m/month
+    Expected range: -3.91 to 3.01
+
+11. Vegetation Cover (%)
+    Description: Stabilizing vegetation cover on the beach-dune-backshore segment.
+    Unit: %
+    Expected range: 0.0 to 82.6
+
+12. Previous Month Shoreline Position Change (m)
+    Description: Shoreline movement during the previous month. Negative values indicate retreat and positive values indicate seaward recovery.
+    Unit: m
+    Expected range: -3.10 to 1.16
+
+13. Relative Sea-Level Rise (mm/yr)
+    Description: Local relative sea-level rise trend, including vertical land motion effects.
+    Unit: mm/yr
+    Expected range: 1.21 to 9.55
+
+How the Synthetic Time Series Was Constructed
+The dataset was not created by drawing independent random numbers for each row. Instead, it was generated as a physically informed monthly panel time series with temporal persistence and coastal-process logic.
+
+Generation framework
+- 40 shoreline segments were created and observed over 36 monthly timesteps, producing 1440 rows.
+- Each shoreline segment belongs to one of several latent coastal settings used internally during generation:
+  sheltered sandy coasts, mesotidal open coasts, exposed barrier coasts, deltaic subsiding coasts, and reflective coarse beaches.
+- Segment-specific baseline properties were assigned for wave climate, tidal range, storm surge tendency, beach width, dune elevation, sediment size, nearshore slope, vegetation, and relative sea-level rise.
+- A seasonal wave cycle was imposed so that many segments experience larger monthly wave conditions during winter-type months and calmer conditions during summer-type months.
+- Random storm pulses were added with higher probability during stormier seasons. Storm clustering was allowed by carrying some storm memory from the previous month.
+- Monthly sediment budget balance depends on the segment baseline, seasonal recovery tendency, storm losses, and lower-frequency climate variability.
+- Antecedent morphology evolves through time. Beach width, dune crest elevation, and vegetation cover are updated from month to month based on erosion or recovery tendencies, so the dataset contains realistic memory effects.
+- The feature "Previous Month Shoreline Position Change (m)" is a lagged response variable included as an antecedent state indicator to make the dataset genuinely time-series oriented.
+
+Engineering Logic Behind Class Assignment
+The target class was assigned from a hidden monthly shoreline change response model and a storm-impact hazard model.
+
+1. Hydrodynamic forcing
+   Monthly wave height, peak period, and storm surge were combined with beach face slope to estimate a wave runup proxy. This creates a total water level style forcing signal consistent with coastal storm impact concepts.
+
+2. Protective morphology
+   Wider beaches, higher dunes, coarser sediment, and larger vegetation cover reduce erosion susceptibility by increasing resistance to hydrodynamic forcing.
+
+3. Chronic and antecedent stress
+   Negative monthly sediment budget balance, higher relative sea-level rise, and retreat in the previous month increase susceptibility and make subsequent months more likely to remain erosive.
+
+4. Temporal persistence
+   Coastal change has memory. A strongly erosive month narrows the beach and can reduce dune and vegetation protection in later months, which makes the time series more realistic for educational forecasting and classification exercises.
+
+5. Final class logic
+   - Recovery / Accreting is used when monthly behavior is clearly constructive and water levels remain well below the dune crest.
+   - Stable Seasonal State is used when net response is small and the coast remains protected.
+   - Mild Erosion Pressure represents modest retreat or noticeable but not extreme erosive stress.
+   - Active Erosion represents clear erosive response.
+   - Severe Erosion Episode is reserved for the most energetic and damaging monthly conditions, particularly when the total water proxy approaches or exceeds dune crest protection.
+
+Missing Data Strategy
+Missing values were inserted independently and randomly in each predictive input feature only. Missingness is not block-structured by month or by shoreline segment. The metadata columns and target column contain no missing values. Missing values are written as NaN in the CSV file.
+
+Exact missing percentages by predictive input feature
+- Significant Wave Height (m): 8.12%
+- Peak Wave Period (s): 6.67%
+- Mean Spring Tidal Range (m): 9.17%
+- Monthly Peak Storm Surge (m): 8.19%
+- Beach Width (m): 5.07%
+- Beach Face Slope (-): 5.28%
+- Median Grain Size D50 (mm): 7.29%
+- Dune Crest Elevation (m): 7.15%
+- Nearshore Bathymetric Slope (-): 6.94%
+- Monthly Sediment Budget Balance (m3/m/month): 7.71%
+- Vegetation Cover (%): 5.56%
+- Previous Month Shoreline Position Change (m): 6.11%
+- Relative Sea-Level Rise (mm/yr): 8.47%
+
+Why This Dataset Is Realistic and Educational
+This dataset is realistic because it uses variables that coastal engineers commonly analyze when studying shoreline change, storm impacts, and vulnerability. It includes both forcing variables and resistance variables, introduces natural seasonal variability, and adds time dependence through lagged shoreline response and evolving morphology. It is educational because students can practice:
+- time-aware train/validation/test splitting,
+- missing data imputation,
+- feature engineering from dates,
+- lag interpretation,
+- multiclass classification,
+- confusion matrix analysis,
+- class imbalance handling,
+- comparison between non-time-aware and time-aware evaluation methods.
+
+Intended Educational Use
+Recommended beginner exercises include:
+- converting dates to month, season, or cyclical variables,
+- grouping by shoreline segment and plotting time series,
+- handling missing values with mean, median, KNN, or model-based imputation,
+- building multiclass classifiers such as multinomial logistic regression, random forests, gradient boosting, and support vector machines,
+- testing leakage-aware split strategies such as training on earlier months and testing on later months,
+- evaluating model performance by class and by shoreline segment,
+- examining feature importance and engineering interpretation.
+
+Assumptions
+- The dataset represents generic sandy shoreline segments rather than one specific field site.
+- Relative sea-level rise is treated as segment-specific and constant through the 3-year record.
+- Tidal range and nearshore bathymetric slope are treated as fixed for each segment over the observation window.
+- Dune crest elevation, vegetation cover, and beach width evolve gradually through time in response to forcing and sediment balance.
+- The target classes represent engineering-style interpreted states rather than legal or regulatory categories.
+- Human interventions such as nourishment, seawalls, groins, and emergency dune repair are not modeled explicitly as separate input variables.
+
+Reference Basis Used for Realism
+The variable choices and class logic were informed by standard coastal engineering concepts, including:
+- significant wave height and peak period as standard descriptors of wave climate,
+- storm surge, tide, and wave runup as controls on storm impact,
+- dune elevation and beach width as key protective morphology variables,
+- shoreline position change and sediment balance as indicators of ongoing coastal change,
+- seasonal shoreline erosion and recovery cycles observed on many sandy coasts.
+
+Final Validation Checklist
+- Row count between 1000 and 2000: yes (1440)
+- Predictive input feature count between 11 and 14: yes (13)
+- Metadata columns included for time-series use: yes (2)
+- Exactly 1 target column: yes
+- Target column is last: yes
+- Exactly 5 classes: yes
+- Every predictive input feature has 5% to 10% NaN values: yes
+- Metadata columns contain no missing values: yes
+- Target column contains no missing values: yes
+- Dataset is suitable for beginner machine learning in Ocean and Coastal Engineering: yes

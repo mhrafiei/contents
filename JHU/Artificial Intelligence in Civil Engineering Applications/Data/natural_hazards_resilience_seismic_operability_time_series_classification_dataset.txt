@@ -1,0 +1,211 @@
+Dataset Name:
+natural_hazards_resilience_seismic_operability_time_series_classification_dataset
+
+Problem Statement:
+This synthetic dataset is a time-series panel for beginner machine learning education in natural hazards resilience design. Each sequence represents one building recovery scenario after a damaging earthquake, and each row is a recovery checkpoint for that same building at a specific time after the event. The task is to classify the building's post-earthquake operability state at each checkpoint.
+
+Chosen Time-Series Classification Problem:
+Post-earthquake building operability class over time.
+
+Time-Series Structure:
+- Number of building scenarios (sequences): 120
+- Checkpoints per sequence: 12
+- Total rows: 1440
+- Time checkpoints (days after event): 0, 1, 3, 7, 14, 30, 60, 90, 120, 180, 240, 365
+- Sequence key column: Building_Scenario_ID
+- Time index column: Days_After_Event
+
+Target Variable:
+Operability_Class
+Definition:
+Multiclass label describing the building's recovery and usability state at each checkpoint after the earthquake.
+
+Five Classes:
+1. Unsafe_Closed
+   Meaning:
+   Building is not yet safe for normal entry or use. Emergency access only.
+2. Restricted_Access
+   Meaning:
+   Limited access is allowed for inspection, stabilization, or essential retrieval, but normal occupancy is still restricted.
+3. Reoccupancy
+   Meaning:
+   Safe re-entry has been achieved, but the building cannot yet support most intended functions at a near-normal level.
+4. Functional_Recovery
+   Meaning:
+   Basic intended functions are restored at reduced or managed capacity.
+5. Full_Recovery
+   Meaning:
+   Near-normal or full pre-earthquake operation has been restored.
+
+Class Distribution:
+- Unsafe_Closed: 306 rows (21.2%)
+- Restricted_Access: 234 rows (16.2%)
+- Reoccupancy: 343 rows (23.8%)
+- Functional_Recovery: 255 rows (17.7%)
+- Full_Recovery: 302 rows (21.0%)
+
+Input Feature Count:
+- Predictive input features: 14
+- Time-series metadata columns not counted as predictive inputs: 2
+  - Building_Scenario_ID
+  - Days_After_Event
+
+Time-Series Metadata Fields:
+- Building_Scenario_ID
+  Description: Unique identifier for each building-earthquake recovery sequence.
+  Unit: categorical ID
+  Expected Range: B001 to B120
+- Days_After_Event
+  Description: Recovery checkpoint time measured from the earthquake occurrence.
+  Unit: days
+  Expected Range: 0 to 365
+
+Predictive Input Features:
+- Structural_System
+  Description: Primary lateral force-resisting system.
+  Unit: category
+  Expected Range: Steel_Moment_Frame; Steel_Braced_Frame; RC_Moment_Frame; RC_Shear_Wall; Unreinforced_Masonry
+
+- Occupancy_Type
+  Description: General pre-earthquake building use affecting required service levels and recovery thresholds.
+  Unit: category
+  Expected Range: Residential; Office; Education; Healthcare; Retail
+
+- Number_of_Stories
+  Description: Total above-grade stories.
+  Unit: count
+  Expected Range: 1 to 16
+
+- Construction_Year
+  Description: Approximate original construction year.
+  Unit: year
+  Expected Range: 1950 to 2022
+
+- Seismic_Design_Level
+  Description: Proxy for code era and seismic detailing quality.
+  Unit: category
+  Expected Range: Pre_Code; Low_Code; Moderate_Code; High_Code
+
+- Site_Class
+  Description: NEHRP-style site class proxy for local soil stiffness and amplification.
+  Unit: category
+  Expected Range: B; C; D; E
+
+- Retrofit_Level
+  Description: Level of completed seismic retrofit before the earthquake.
+  Unit: category
+  Expected Range: No_Retrofit; Partial_Retrofit; Extensive_Retrofit
+
+- Peak_Ground_Acceleration_g
+  Description: Site-level peak ground acceleration during the scenario earthquake.
+  Unit: g
+  Expected Range: 0.07 to 0.85
+
+- Spectral_Acceleration_1p0s_g
+  Description: 5%-damped spectral acceleration at 1.0 s.
+  Unit: g
+  Expected Range: 0.08 to 1.17
+
+- Initial_Residual_Drift_Ratio_pct
+  Description: Initial post-shaking residual drift ratio used as a proxy for unresolved structural distortion severity.
+  Unit: percent
+  Expected Range: 0.00 to 1.54
+
+- Safety_Inspection_Completion_pct
+  Description: Percent completion of formal safety inspection and engineering assessment activities by the checkpoint date.
+  Unit: percent
+  Expected Range: 0 to 100
+
+- Utility_Availability_pct
+  Description: Aggregate availability of essential utilities and supporting services needed for building operation.
+  Unit: percent
+  Expected Range: 3 to 100
+
+- Structural_Repair_Completion_pct
+  Description: Percent completion of structural repair and stabilization work.
+  Unit: percent
+  Expected Range: 0 to 100
+
+- Nonstructural_Repair_Completion_pct
+  Description: Percent completion of nonstructural repair work, including partitions, ceilings, architectural finishes, and service-supporting components.
+  Unit: percent
+  Expected Range: 0 to 100
+
+How the Synthetic Time-Series Data Was Constructed:
+1. A building inventory was generated using realistic combinations of structural system, occupancy, height, construction year, design level, site class, and retrofit level.
+2. Peak ground acceleration and 1.0-second spectral acceleration were generated as correlated earthquake intensity measures, modified by site amplification and building period effects.
+3. Initial residual drift was generated from hazard intensity, structural vulnerability, code level, retrofit, site condition, height, and hidden variability terms.
+4. A hidden initial severity variable was computed from hazard demand and capacity proxies. This severity variable then controlled recovery speed.
+5. Recovery checkpoint features were simulated using monotonic recovery curves:
+   - safety inspection completion generally progresses fastest,
+   - utility restoration typically recovers faster than structural repair,
+   - structural repair is usually the slowest process for severely damaged buildings,
+   - nonstructural repair affects the transition from reoccupancy to functional recovery and full recovery.
+6. Recovery speeds were slowed for more severe damage, taller buildings, older/pre-code buildings, softer soils, and more vulnerable systems such as unreinforced masonry. Recovery speeds were improved for retrofitted and better-detailed buildings.
+7. Occupancy type influences recovery thresholds. For example, healthcare and education buildings require higher utility and service restoration before being classified at the higher operability states.
+8. The target class at each checkpoint was assigned using engineering-inspired logic combining inspection completion, utility availability, repair completion, and unresolved drift. Small stochastic variation was included so the classification problem is educational and not perfectly separable.
+9. Operability state progression was constrained to be non-decreasing within each sequence, which is appropriate for a simplified recovery teaching dataset without aftershock setbacks.
+
+Engineering Logic Behind Class Assignment:
+- Unsafe_Closed is associated with low inspection completion, unresolved structural concerns, or inadequate life-safety conditions.
+- Restricted_Access represents the transition phase where emergency stabilization or limited access is possible but normal occupancy remains restricted.
+- Reoccupancy is reached when the building is safe to re-enter, consistent with the idea of safe re-entry before normal function has returned.
+- Functional_Recovery is reached when the building can support most basic intended functions, though not yet at full normal performance.
+- Full_Recovery requires high repair completion, strong utility restoration, and very low unresolved residual drift.
+
+Missing Data Strategy:
+Missing values were introduced independently and randomly in every predictive input feature column only. Missing values are represented as NaN. The time-series metadata columns and the target column contain no missing values.
+
+- Structural_System: 101 missing values (7.0%)
+- Occupancy_Type: 86 missing values (6.0%)
+- Number_of_Stories: 115 missing values (8.0%)
+- Construction_Year: 101 missing values (7.0%)
+- Seismic_Design_Level: 101 missing values (7.0%)
+- Site_Class: 86 missing values (6.0%)
+- Retrofit_Level: 101 missing values (7.0%)
+- Peak_Ground_Acceleration_g: 115 missing values (8.0%)
+- Spectral_Acceleration_1p0s_g: 101 missing values (7.0%)
+- Initial_Residual_Drift_Ratio_pct: 130 missing values (9.0%)
+- Safety_Inspection_Completion_pct: 115 missing values (8.0%)
+- Utility_Availability_pct: 101 missing values (7.0%)
+- Structural_Repair_Completion_pct: 86 missing values (6.0%)
+- Nonstructural_Repair_Completion_pct: 101 missing values (7.0%)
+
+Intended Educational Use:
+This dataset is designed for beginner machine learning practice with a realistic civil engineering context. It supports:
+- preprocessing mixed categorical and numeric data,
+- random and grouped missing-data imputation,
+- grouped train/test splits by Building_Scenario_ID,
+- exploratory data analysis of recovery trajectories,
+- lag-feature or rolling-feature engineering,
+- multiclass classification with tabular models,
+- evaluation with confusion matrices, macro-F1, and class-wise recall,
+- discussion of time-series leakage and proper validation strategies.
+
+Assumptions:
+- Each sequence represents one building exposed to one mainshock earthquake scenario.
+- No post-mainshock aftershock-induced setbacks are included, so recovery is monotonic.
+- Utility availability and repair completion are simplified aggregate indicators rather than component-level simulations.
+- Construction year influences code level and vulnerability internally, but seismic design level is the main visible proxy for detailing quality.
+- The dataset is intended for education and demonstration, not for design approval, emergency permitting, or real post-earthquake decision making.
+
+Reference Basis Used During Design:
+- NIST SP 1254 / FEMA P-2090 for the definitions of reoccupancy and functional recovery.
+  https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1254.pdf
+- NIST functional recovery program overview for the role of reduced downtime in community resilience.
+  https://www.nist.gov/programs-projects/functional-recovery-buildings-and-lifelines
+- ATC-138 / FEMA P-58 functional recovery methodology overview for time-to-recovery assessment logic.
+  https://femap58.atcouncil.org/fr-methodology
+- USGS description of NEHRP site classes A to E and site amplification concepts.
+  https://www.usgs.gov/publications/new-site-coefficients-and-site-classification-system-used-recent-building-seismic-code
+- FEMA Hazus earthquake guidance indicating building recovery time as a function of damage state and occupancy.
+  https://www.fema.gov/sites/default/files/documents/fema-hazus-6.1-earthquake-model-user-guidance.pdf
+
+Validation Summary:
+- Total rows: 1440
+- Predictive input feature count: 14
+- Target column count: 1
+- Target column is last: Yes
+- Number of classes: 5
+- Target missing values: 0
+- Predictive features with missing values between 5% and 10%: Yes

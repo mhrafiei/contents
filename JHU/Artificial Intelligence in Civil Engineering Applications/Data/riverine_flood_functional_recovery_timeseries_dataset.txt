@@ -1,0 +1,212 @@
+Dataset name:
+riverine_flood_functional_recovery_timeseries_dataset
+
+Problem statement:
+This synthetic dataset is a panel time-series dataset for beginner machine learning in civil engineering and natural hazards resilience design. The task is to predict the daily functional recovery ratio of non-residential buildings during the first 35 days after a riverine flood event.
+
+Target variable:
+Functional_Recovery_Ratio_pct
+Definition: Estimated building functionality on a given day after flooding, expressed as a percentage of pre-event functionality.
+Interpretation:
+- 0% means the building is effectively nonfunctional
+- 100% means full functional recovery has been achieved
+
+Dataset structure:
+- Total rows: 1680
+- Flood events: 8
+- Facilities: 48
+- Daily observations per facility: 35
+- Predictive input features: 12
+- Index columns kept complete for time-series use: Flood_Event_ID, Facility_ID, Observation_Date, Day_Since_Event
+- Regression target columns: 1
+
+Recommended machine learning framing:
+This is a panel time-series regression problem. Each row is one facility-day observation. Students can:
+- use the predictive features directly in tabular regression
+- perform time-based train/test splitting
+- create lag features as an extension exercise
+- compare standard regression models with sequence-aware workflows
+
+Index columns (not counted as predictive input features):
+1. Flood_Event_ID
+   Description: Identifier for the flood event affecting the facility
+   Unit: categorical code
+   Range: EVT01 to EVT08
+
+2. Facility_ID
+   Description: Identifier for the facility time series
+   Unit: categorical code
+   Range: FAC001 to FAC048
+
+3. Observation_Date
+   Description: Calendar date of the daily observation
+   Unit: date
+   Range: event-dependent daily sequence over 35 days
+
+4. Day_Since_Event
+   Description: Elapsed whole days since the flood event began for that facility series
+   Unit: day
+   Range: 0 to 34
+
+Predictive feature list:
+
+1. Occupancy_Type
+   Description: Primary non-residential building occupancy category affecting damage sensitivity and operational complexity
+   Unit: categorical
+   Expected range: Office, Retail, School, Healthcare, Warehouse
+
+2. Foundation_Type
+   Description: Simplified foundation and lower-level configuration influencing water entry, retained moisture, and cleanup difficulty
+   Unit: categorical
+   Expected range: Slab-on-grade, Raised slab, Basement, Pile/Pier
+
+3. Gross_Floor_Area_m2
+   Description: Total enclosed floor area of the facility
+   Unit: m^2
+   Expected range: about 800 to 45000 m^2
+
+4. Peak_Inundation_Depth_above_Grade_m
+   Description: Maximum external floodwater depth above surrounding grade at the facility
+   Unit: m
+   Expected range: about 0.25 to 4.9 m
+
+5. Flood_Duration_hr
+   Description: Approximate duration that damaging floodwater remained near the facility
+   Unit: hr
+   Expected range: about 10 to 220 hr
+
+6. Flow_Velocity_m_per_s
+   Description: Representative local floodwater velocity near the facility
+   Unit: m/s
+   Expected range: about 0.0 to 2.6 m/s
+
+7. Structural_Condition_Index
+   Description: Simplified overall condition rating of the building envelope and structural/nonstructural systems
+   Unit: index (0 to 100)
+   Expected range: about 45 to 98
+
+8. First_Floor_Elevation_above_Grade_m
+   Description: Elevation of the first occupied floor above adjacent grade
+   Unit: m
+   Expected range: about 0.0 to 2.5 m
+
+9. Flood_Damage_Resistant_Materials_Share_pct
+   Description: Estimated share of lower-level materials and finishes that are flood-damage-resistant
+   Unit: %
+   Expected range: about 8 to 95%
+
+10. Contractor_Crew_Availability_pct
+    Description: Daily effective availability of repair crews relative to the facility's recovery needs
+    Unit: %
+    Expected range: about 0 to 100%
+
+11. Utility_Service_Availability_pct
+    Description: Daily availability of essential building utility services such as power and major mechanical systems
+    Unit: %
+    Expected range: about 0 to 100%
+
+12. Drying_and_Cleanup_Progress_pct
+    Description: Daily progress of dewatering, debris removal, drying, and interior cleanup activities
+    Unit: %
+    Expected range: about 0 to 100%
+
+How the synthetic time-series data was constructed:
+The dataset was generated using engineering-inspired rules rather than arbitrary random numbers.
+
+Step 1: Event generation
+Eight riverine flood events were created with different regional severities, contractor supply constraints, and utility restoration conditions.
+
+Step 2: Facility generation
+For each event, six non-residential facilities were generated with realistic occupancy types, foundation types, floor areas, structural condition levels, first-floor elevations, and shares of flood-damage-resistant materials.
+
+Step 3: Hazard characterization
+Each facility was assigned flood intensity variables including peak inundation depth, flood duration, and flow velocity. These variables were correlated so that deeper flood events tended to last longer and often had higher local velocity.
+
+Step 4: Initial damage and starting functionality
+A hidden initial damage severity score was computed from:
+- effective flood depth relative to first-floor elevation
+- flood duration
+- flow velocity
+- foundation type
+- structural condition
+- flood-damage-resistant materials share
+- building size
+- occupancy complexity
+
+Initial functionality on day 0 was then estimated from that severity score. Facilities with deeper flooding, longer duration, higher velocity, poorer condition, larger area, and more vulnerable foundations started from lower functionality.
+
+Step 5: Daily recovery trajectories
+For each facility-day observation, daily recovery-state variables were generated as smooth but noisy time trajectories:
+- Contractor_Crew_Availability_pct
+- Utility_Service_Availability_pct
+- Drying_and_Cleanup_Progress_pct
+
+These trajectories were influenced by event severity, facility size, occupancy priority, foundation type, and hidden utility protection conditions.
+
+Step 6: Daily target generation
+Functional_Recovery_Ratio_pct was generated as a bounded nonlinear recovery process. Recovery increased over time but was limited by:
+- available utility service
+- drying and cleanup progress
+- contractor crew availability
+- initial flood severity
+- facility size
+- first-floor elevation
+- structural condition
+- flood-damage-resistant materials share
+
+The result is a realistic monotonic recovery pattern with facility-to-facility variability, nonlinear behavior, and moderate noise.
+
+Summary of engineering logic behind the relationships:
+1. Flood depth is a dominant driver of initial direct damage.
+2. Longer flood duration generally increases contamination, wetting, and cleanup burden.
+3. Higher flow velocity increases hydraulic damage severity and slows early recovery.
+4. Higher first-floor elevation reduces interior exposure and usually improves recovery.
+5. Flood-damage-resistant materials improve cleanability and reduce repair consequences.
+6. Basement configurations are generally slower to restore than pile/pier or raised-floor systems because retained water and below-grade spaces complicate cleanup.
+7. Larger facilities generally recover more slowly because more area, systems, and finishes must be restored.
+8. Daily functionality depends strongly on dynamic recovery states such as utilities, cleanup progress, and crew availability.
+9. Recovery is nonlinear: early gains can be slow, mid-recovery may accelerate, and progress tapers as the facility approaches full functionality.
+
+Missing data strategy:
+Missing values were inserted after target generation so that the target remains fully observed for supervised regression. Missingness was applied randomly to predictive features only. The identifier and time-index columns were kept complete to preserve chronological order and panel structure.
+
+Realized missing-data percentages in predictive features:
+- Occupancy_Type: 8.4%
+- Foundation_Type: 9.3%
+- Gross_Floor_Area_m2: 6.8%
+- Peak_Inundation_Depth_above_Grade_m: 9.8%
+- Flood_Duration_hr: 7.3%
+- Flow_Velocity_m_per_s: 7.3%
+- Structural_Condition_Index: 5.9%
+- First_Floor_Elevation_above_Grade_m: 9.4%
+- Flood_Damage_Resistant_Materials_Share_pct: 6.7%
+- Contractor_Crew_Availability_pct: 6.4%
+- Utility_Service_Availability_pct: 7.8%
+- Drying_and_Cleanup_Progress_pct: 6.9%
+
+All missing values are encoded as NaN.
+The target column contains no missing values.
+
+Intended educational use:
+This dataset is intended for beginner civil engineering graduate students learning regression-based machine learning and time-series data handling. It supports:
+- exploratory data analysis
+- understanding panel time-series structure
+- missing-data inspection and imputation
+- categorical encoding
+- feature scaling
+- time-based train/test splitting
+- regression model fitting and comparison
+- learning how dynamic recovery-state variables influence resilience outcomes
+- optional lag-feature engineering and forecasting extensions
+
+Assumptions:
+- The dataset represents non-residential buildings exposed to riverine flooding rather than coastal wave-dominated flooding.
+- Functional_Recovery_Ratio_pct is a simplified building-level resilience indicator, not an official regulatory or insurance metric.
+- Daily utility availability and cleanup progress are treated as measurable operational variables even though, in practice, they may be estimated from inspections or facility reports.
+- The dataset emphasizes direct building functionality recovery and does not explicitly model community-wide indirect losses, occupancy return behavior, or supply-chain interruption.
+- The dataset is synthetic and intentionally simplified for teaching, but its structure and dependencies are based on plausible engineering logic.
+
+Reference notes used to guide realism:
+- HEC-FIA flood-damage methods rely on hydraulic inputs such as depth, duration-related thresholds, occupancy type, and depth-percent damage logic.
+- ASCE 24 and FEMA flood guidance emphasize higher elevation, flood-resistant design, protected utilities, and flood-damage-resistant materials.
+- EPA flood cleanup guidance notes that drying, debris removal, and moisture control take time and materially affect post-flood recovery.

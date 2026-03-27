@@ -1,0 +1,159 @@
+Dataset Name:
+geotechnical_time_series_field_cbr_dataset
+
+Problem Statement:
+Predict monthly field California Bearing Ratio (CBR) of compacted pavement subgrade sections using repeated geotechnical and environmental observations in a panel time-series dataset. Each row represents one monitored road section at one monthly observation date.
+
+Dataset Structure:
+- Rows: 1500
+- Time structure: 100 pavement sections observed monthly for 15 months
+- Observation period: 2024-01-01 to 2025-03-01
+- Sequence key columns: Section_ID and Observation_Date
+- Engineering input features: 11
+- Regression target: 1
+
+Target Variable Definition:
+Field_CBR_Percent
+- Definition: In-situ field California Bearing Ratio of the monitored compacted subgrade section at the observation date.
+- Unit: %
+- Role in ML: Single continuous regression target
+- Position in CSV: Last column
+- Missing values: None
+
+Sequence Key Columns (not counted among the 11 engineering input features):
+- Section_ID
+  Description: Unique identifier for each monitored pavement subgrade section.
+  Unit: -
+  Expected Range: SEC_001 to SEC_100
+- Observation_Date
+  Description: Monthly observation date for the section.
+  Unit: YYYY-MM-DD
+  Expected Range: 2024-01-01 to 2025-03-01
+
+Engineering Input Features:
+- Gravel_Content_Percent
+  Description: Gravel fraction of the section soil by dry mass. Repeated over time for the same section because it is an intrinsic soil property.
+  Unit: %
+  Expected Range: 0.053 to 44.195
+- Sand_Content_Percent
+  Description: Sand fraction of the section soil by dry mass. Together with gravel and fines, it represents soil gradation.
+  Unit: %
+  Expected Range: 24.947 to 78.988
+- Fines_Content_Percent
+  Description: Percent passing the No. 200 sieve, including silt and clay-sized particles.
+  Unit: %
+  Expected Range: 9.621 to 73.186
+- Plasticity_Index_Percent
+  Description: Plasticity index used as an indicator of fines plasticity and moisture sensitivity.
+  Unit: %
+  Expected Range: 2.000 to 35.089
+- Optimum_Moisture_Content_Percent
+  Description: Optimum moisture content from compaction testing for the section soil.
+  Unit: %
+  Expected Range: 6.328 to 21.500
+- Maximum_Dry_Density_kN_per_m3
+  Description: Maximum dry density from the laboratory compaction curve for the section soil.
+  Unit: kN/m^3
+  Expected Range: 16.344 to 21.400
+- Natural_Moisture_Content_Percent
+  Description: Measured field moisture content at the monthly observation.
+  Unit: %
+  Expected Range: 4.441 to 26.236
+- Degree_of_Compaction_Percent
+  Description: Achieved field dry density expressed as a percentage of the section maximum dry density.
+  Unit: %
+  Expected Range: 94.707 to 101.262
+- Rainfall_Last_7_Days_mm
+  Description: Total rainfall during the 7 days before the observation date, representing short-term wetting.
+  Unit: mm
+  Expected Range: 0.000 to 140.000
+- Rainfall_Last_30_Days_mm
+  Description: Total rainfall during the 30 days before the observation date, representing recent seasonal wetness.
+  Unit: mm
+  Expected Range: 5.000 to 300.000
+- Groundwater_Depth_m
+  Description: Depth from ground surface to the groundwater table near the section at the observation date.
+  Unit: m
+  Expected Range: 0.350 to 4.569
+
+How the Synthetic Data Was Constructed:
+1. The dataset was built as a panel time series rather than a single-site series. One hundred subgrade sections were generated, each with fixed intrinsic soil properties.
+2. Each section was assigned to a realistic latent soil family: granular soils with fines, silty soils, lean clays, or fat clays.
+3. Static section properties were generated first:
+   - gravel, sand, and fines contents
+   - plasticity index
+   - optimum moisture content
+   - maximum dry density
+4. Monthly environmental forcing was then generated using section-specific rainfall seasonality and variability. Rainfall in the last 7 days and last 30 days was simulated with wet and dry periods plus occasional storm pulses.
+5. Monthly groundwater depth was generated as a seasonal variable influenced by rainfall and section-specific baseline drainage conditions.
+6. Natural moisture content was generated as a time-evolving state influenced by:
+   - recent rainfall
+   - groundwater depth
+   - section plasticity
+   - previous moisture state
+7. Degree of compaction was generated as a time-evolving field condition that tends to reduce slightly under wetter conditions while remaining within a realistic field compaction range.
+8. Field_CBR_Percent was generated from a nonlinear strength model using:
+   - intrinsic soil quality from gradation, plasticity, and compaction properties
+   - current natural moisture relative to optimum moisture
+   - degree of compaction
+   - recent rainfall
+   - groundwater depth
+   - moderate hidden temporal persistence
+9. Realistic noise was added so relationships are useful for machine learning without becoming unrealistically perfect.
+
+Engineering Logic Behind the Relationships:
+- Higher gravel and sand contents generally increase field CBR because coarser soils resist penetration better than highly plastic fine-grained soils.
+- Higher fines content and higher plasticity index generally reduce field CBR because these soils are more moisture-sensitive and weaker when wet.
+- Higher maximum dry density and higher degree of compaction generally increase field CBR because denser packing improves resistance to penetration.
+- Natural moisture content near or below optimum generally supports stronger behavior than overly wet conditions. Excess moisture causes notable CBR reduction.
+- Higher recent rainfall and shallower groundwater generally increase subgrade wetness and therefore reduce field CBR.
+- Because the dataset is time-series, monthly observations exhibit continuity rather than independent random jumps. Moisture and strength states evolve over time.
+
+Missing Data Strategy:
+- Missing values were introduced only in the 11 engineering input feature columns.
+- Missingness was applied independently and randomly by column.
+- Missing values are represented as NaN in the CSV.
+- The exact missing percentages are:
+- Gravel_Content_Percent: 8.1% missing
+- Sand_Content_Percent: 8.0% missing
+- Fines_Content_Percent: 5.7% missing
+- Plasticity_Index_Percent: 5.4% missing
+- Optimum_Moisture_Content_Percent: 9.5% missing
+- Maximum_Dry_Density_kN_per_m3: 9.9% missing
+- Natural_Moisture_Content_Percent: 7.4% missing
+- Degree_of_Compaction_Percent: 7.9% missing
+- Rainfall_Last_7_Days_mm: 9.3% missing
+- Rainfall_Last_30_Days_mm: 5.9% missing
+- Groundwater_Depth_m: 6.2% missing
+- Section_ID and Observation_Date were kept complete so the time ordering and section grouping remain intact.
+- The target column contains no missing values.
+
+Intended Educational Use:
+- Beginner machine learning for civil and geotechnical engineering students
+- Time-series and panel-data preprocessing
+- Missing data imputation
+- Feature engineering from timestamps
+- Grouped train/test splitting by time or by section
+- Exploratory data analysis and visualization
+- Regression modeling using linear models, random forests, gradient boosting, or XGBoost-like methods
+- Optional advanced exercises using lag features and rolling statistics created by students
+
+Assumptions:
+- The dataset represents compacted pavement subgrade sections rather than base course aggregates or organic soils.
+- The field CBR target is intended to mimic repeated field strength measurements affected by seasonal moisture changes.
+- The soil index properties are assumed constant for each section over the observation period, while moisture, rainfall, groundwater depth, compaction state, and strength evolve over time.
+- The dataset is synthetic and educational. It should not be used directly for engineering design without site-specific sampling and testing.
+
+References Used to Inform Ranges and Logic:
+- FHWA, Geotechnical Aspects of Pavements, CBR description and dependence on moisture and relative compaction:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05b.cfm
+- FHWA, Atterberg limits, PI definition, and note that optimum compaction moisture is often near the plastic limit:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05a.cfm
+- FHWA, groundwater depth importance for pavement and foundation moisture conditions:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05d.cfm
+- FHWA, seasonal changes in moisture content for subgrade and unbound materials in the EICM:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/ad.cfm
+- Pavement Interactive, typical CBR ranges by soil group:
+  https://pavementinteractive.org/reference-desk/design/design-parameters/california-bearing-ratio/
+- TRB, moisture content and CBR design relationships:
+  https://onlinepubs.trb.org/Onlinepubs/sr/sr40/sr40-022.pdf

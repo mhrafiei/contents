@@ -1,0 +1,159 @@
+Dataset Name:
+structural_steel_beam_midspan_deflection_dataset
+
+Problem Statement:
+This dataset is a synthetic but engineering-grounded tabular dataset for teaching regression machine learning in Structural Engineering. The task is to predict the maximum midspan deflection of simply supported steel I-beams under service loading using realistic geometric, material, and loading variables.
+
+Chosen Theme:
+Predicting maximum midspan deflection of simply supported steel I-beams under combined distributed and concentrated service loads.
+
+Dataset Size:
+- Rows: 1000
+- Input features: 14
+- Output variables: 1
+- Machine learning task: Regression
+
+Target Variable:
+- Name: Maximum Midspan Deflection (mm)
+- Description: Net downward serviceability deflection at beam midspan after accounting for combined service loading, composite stiffness effects, partial camber offset, and moderate modeling/construction variability.
+- Unit: mm
+- Observed range in this dataset: 0.63 to 71.27
+
+Input Features:
+- Span Length (m)
+  Description: Clear simple span between supports
+  Unit: m
+  Expected range: 4.55 to 12.44
+- Overall Section Depth (mm)
+  Description: Overall depth of the steel I-section
+  Unit: mm
+  Expected range: 270 to 665
+- Flange Width (mm)
+  Description: Overall flange width of the I-section
+  Unit: mm
+  Expected range: 130 to 305
+- Web Thickness (mm)
+  Description: Web plate thickness
+  Unit: mm
+  Expected range: 5.5 to 18.0
+- Flange Thickness (mm)
+  Description: Flange plate thickness
+  Unit: mm
+  Expected range: 8.0 to 28.0
+- Steel Yield Strength (MPa)
+  Description: Specified minimum yield strength of structural steel
+  Unit: MPa
+  Expected range: 240.0 to 436.8
+- Elastic Modulus (GPa)
+  Description: Young's modulus of steel used in serviceability calculations
+  Unit: GPa
+  Expected range: 190.0 to 210.0
+- Tributary Width (m)
+  Description: Supported floor width feeding load to the beam
+  Unit: m
+  Expected range: 2.40 to 5.49
+- Superimposed Dead Load (kPa)
+  Description: Permanent area load from finishes, partitions, services, and non-structural items excluding beam self-weight
+  Unit: kPa
+  Expected range: 0.50 to 4.47
+- Live Load (kPa)
+  Description: Service live load from occupancy and movable loads
+  Unit: kPa
+  Expected range: 1.83 to 9.96
+- Additional Point Load (kN)
+  Description: Local service point load from equipment or concentrated use
+  Unit: kN
+  Expected range: 0.0 to 129.4
+- Point Load Position Ratio (-)
+  Description: Location of the point load measured from the left support divided by span length
+  Unit: -
+  Expected range: 0.220 to 0.792
+- Composite Action Ratio (-)
+  Description: Proxy for degree of slab-beam composite interaction, where 0 means non-composite
+  Unit: -
+  Expected range: 0.000 to 0.646
+- Initial Camber (mm)
+  Description: Fabrication camber introduced to offset part of dead-load deflection
+  Unit: mm
+  Expected range: 0.0 to 20.5
+
+How the Synthetic Data Was Constructed:
+1. Structural context:
+   The records represent simply supported steel I-beams used as floor or framing beams in buildings. Inputs were generated within realistic ranges for span, tributary width, service floor loads, and section geometry.
+
+2. Geometry generation:
+   Beam depth, flange width, flange thickness, and web thickness were generated as internally consistent I-section dimensions using realistic proportion rules for compact to moderately slender rolled or built-up steel beams. Geometry was not sampled independently without checks. Section dimensions were correlated with span and service demand so that deeper sections tend to occur in longer or more heavily loaded beams.
+
+3. Material properties:
+   Steel yield strength was sampled around common structural steel grades from about 250 MPa to 420 MPa with small variability. Elastic modulus was centered near 200 GPa with modest variation to reflect standard structural steel behavior.
+
+4. Loading logic:
+   Area loads were represented by superimposed dead load and live load in kPa, then converted to line load through tributary width. Beam self-weight was calculated from the generated cross-sectional area using a structural steel unit weight of about 77 kN/m^3. An additional concentrated service load was included for cases with equipment or localized use. Point load position was allowed to vary along the span.
+
+5. Structural response model:
+   The target deflection was computed from classical elastic beam theory:
+   - Uniform load component based on delta = 5wL^4 / (384EI) for a simply supported beam
+   - Concentrated load component based on the closed-form elastic solution for a point load at an arbitrary location
+   Major-axis second moment of area was calculated from the synthetic I-section dimensions. Composite action ratio increased effective flexural stiffness. Initial camber reduced the net measured downward deflection. Moderate noise was then added to represent connection flexibility, erection tolerance, and modeling uncertainty.
+
+6. Plausibility checks:
+   Candidate rows were rejected if they produced unrealistic section proportions, implausible self-weight, excessively low or high service stress utilization, or extreme deflection values not consistent with common building beam behavior. This avoids impossible or contradictory combinations.
+
+Engineering Logic Behind the Relationships:
+- Deflection increases strongly with span length, especially because elastic beam deflection scales approximately with L^4 under uniform load.
+- Deflection decreases with greater flexural stiffness EI, which is driven mainly by section geometry and elastic modulus.
+- Tributary width converts area load to beam line load, so larger tributary width generally increases deflection.
+- Superimposed dead load, live load, and additional point load increase deflection.
+- Composite action increases effective stiffness and therefore tends to reduce deflection.
+- Initial camber offsets part of the service deflection.
+- Yield strength has only a secondary influence on serviceability deflection, which is realistic and useful for beginner feature importance studies.
+- Because real beams are selected in response to span and load demands, larger sections can still appear together with larger deflections. This introduces realistic confounding rather than an artificially simple inverse relationship.
+
+Missing Data Strategy:
+Each input feature column contains randomly distributed missing values represented as NaN. Missingness was injected after the target was calculated from the complete underlying engineering variables. This mimics incomplete field records, incomplete drawings, or missing material/load metadata while preserving a fully observed regression target.
+Actual missingness by input column:
+- Span Length (m): 62 missing values (6.2%)
+- Overall Section Depth (mm): 59 missing values (5.9%)
+- Flange Width (mm): 69 missing values (6.9%)
+- Web Thickness (mm): 73 missing values (7.3%)
+- Flange Thickness (mm): 63 missing values (6.3%)
+- Steel Yield Strength (MPa): 88 missing values (8.8%)
+- Elastic Modulus (GPa): 78 missing values (7.8%)
+- Tributary Width (m): 78 missing values (7.8%)
+- Superimposed Dead Load (kPa): 66 missing values (6.6%)
+- Live Load (kPa): 71 missing values (7.1%)
+- Additional Point Load (kN): 56 missing values (5.6%)
+- Point Load Position Ratio (-): 78 missing values (7.8%)
+- Composite Action Ratio (-): 71 missing values (7.1%)
+- Initial Camber (mm): 86 missing values (8.6%)
+
+The target column contains no missing values because the dataset is intended for supervised regression exercises and because target loss was not necessary to achieve educational realism.
+
+Intended Educational Use:
+This dataset is suitable for beginner graduate students learning:
+- data cleaning and missing value imputation
+- exploratory data analysis and visualization
+- correlation analysis and engineering interpretation
+- baseline linear regression
+- nonlinear regression and feature engineering
+- train/test splitting and cross-validation
+- model comparison and error metrics
+- discussion of confounding, multicollinearity, and physically informed feature importance
+
+Assumptions:
+- Beams are simply supported and prismatic.
+- Response is governed by elastic serviceability behavior in major-axis bending.
+- Loads are service-level loads, not factored ultimate design combinations.
+- Composite action is represented by a single stiffness amplification proxy rather than an explicit slab model.
+- Camber only partially offsets the final net deflection.
+- Local buckling, lateral-torsional buckling, vibration, temperature effects, long-term creep, and connection details are not modeled explicitly.
+- Hidden occupancy/use classes were used internally to diversify load patterns, but those class labels are not included in the final dataset so that the table remains beginner-friendly and purely numeric.
+
+Final Checks:
+- Row count between 1000 and 2000: PASS
+- Input feature count between 11 and 14: PASS
+- Exactly one regression target: PASS
+- Target is the last column: PASS
+- Every input feature has 5% to 10% NaN values: PASS
+- Target column has no missing values: PASS
+- Values were generated from engineering relationships rather than arbitrary random sampling: PASS

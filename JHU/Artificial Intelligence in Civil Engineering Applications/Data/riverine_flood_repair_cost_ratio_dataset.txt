@@ -1,0 +1,156 @@
+Dataset name:
+riverine_flood_repair_cost_ratio_dataset
+
+Problem statement:
+This synthetic dataset is designed for beginner regression modeling in civil engineering and natural hazards resilience design. The task is to predict the post-flood repair cost ratio of a non-residential building exposed to a riverine flood event. The target is expressed as a percentage of total building replacement value.
+
+Target variable:
+Repair_Cost_Ratio_pct
+Definition: Estimated direct building repair cost divided by total building replacement value, expressed in percent (%).
+Range in this dataset: 0 to 100%
+
+Dataset size:
+Rows: 1000
+Input features: 13
+Output variables: 1
+Machine learning task: Supervised regression
+
+Feature list:
+
+1. Occupancy_Type
+   Description: Primary non-residential occupancy class used to reflect differences in finishes, service density, and flood vulnerability.
+   Unit: categorical
+   Expected range: Office, Retail, School, Healthcare, Warehouse
+
+2. Foundation_Type
+   Description: Simplified foundation and below-grade configuration influencing vulnerability, elevation, and flood pathways.
+   Unit: categorical
+   Expected range: Slab-on-grade, Raised slab, Basement, Pile/Pier
+
+3. Peak_Inundation_Depth_above_Grade_m
+   Description: Maximum external floodwater depth above surrounding ground level at the building site during the event.
+   Unit: m
+   Expected range: about 0.1 to 5.0 m
+
+4. Flood_Duration_hr
+   Description: Approximate duration that floodwater remains at damaging levels near the building.
+   Unit: hr
+   Expected range: about 6 to 220 hr
+
+5. Flow_Velocity_m_per_s
+   Description: Representative local floodwater flow velocity near the building.
+   Unit: m/s
+   Expected range: about 0.0 to 2.7 m/s
+
+6. First_Floor_Elevation_above_Grade_m
+   Description: Elevation of the first occupied floor above adjacent grade.
+   Unit: m
+   Expected range: about 0.0 to 2.5 m
+
+7. Dry_Floodproofing_Height_above_Grade_m
+   Description: Height above grade to which dry floodproofing measures are designed to resist water intrusion.
+   Unit: m
+   Expected range: about 0.0 to 1.8 m
+
+8. Number_of_Stories
+   Description: Total number of above-grade stories.
+   Unit: count
+   Expected range: 1 to 10
+
+9. Gross_Floor_Area_m2
+   Description: Total enclosed floor area of the building.
+   Unit: m^2
+   Expected range: about 500 to 45000 m^2
+
+10. Building_Age_yr
+    Description: Approximate building age at the time of the flood event.
+    Unit: yr
+    Expected range: about 2 to 85 yr
+
+11. Structural_Condition_Index
+    Description: Simplified overall condition indicator for the building envelope and structural/nonstructural systems.
+    Unit: index (0 to 100)
+    Expected range: about 35 to 99
+
+12. Utility_Elevation_above_First_Floor_m
+    Description: Height of major electrical/mechanical utility equipment above the first-floor level.
+    Unit: m
+    Expected range: about 0.0 to 2.4 m
+
+13. Flood_Damage_Resistant_Materials_Share_pct
+    Description: Estimated share of lower-level finishes and materials that are flood-damage-resistant.
+    Unit: %
+    Expected range: about 5 to 95%
+
+How the synthetic data was constructed:
+The dataset was generated using engineering-inspired conditional rules rather than arbitrary random numbers. Hazard intensity variables were first created with realistic dependence between inundation depth, duration, and flow velocity. Buildings were then generated with plausible non-residential occupancies, foundation types, story counts, floor areas, ages, condition levels, first-floor elevations, utility elevations, dry floodproofing heights, and flood-damage-resistant material shares.
+
+The target was calculated from a nonlinear vulnerability model built around an effective interior flood depth:
+effective interior depth = max(0, peak inundation depth - protection height)
+where protection height depends on first-floor elevation and dry floodproofing height.
+
+The target then increases with:
+- larger effective flood depth
+- longer flood duration
+- higher flow velocity
+- older age
+- poorer condition
+- more vulnerable occupancy and foundation configurations
+
+The target decreases with:
+- higher first-floor elevation
+- higher dry floodproofing height
+- more elevated utilities
+- larger share of flood-damage-resistant materials
+- more stories, because flooding of the lower level represents a smaller fraction of total replacement value in taller buildings
+
+A depth-times-velocity penalty was added for severe cases to represent rapid escalation toward near-total damage under extreme hydraulic loading. Moderate noise was then added to make the problem more realistic and educational for regression.
+
+Summary of engineering logic behind the relationships:
+1. Flood depth is the dominant driver of direct damage.
+2. Longer inundation generally increases cleanup, material deterioration, and repair needs.
+3. Higher velocity increases hydrodynamic and impact-related damage and can push buildings toward near-total loss in severe cases.
+4. Higher first-floor elevation and dry floodproofing reduce interior water exposure.
+5. Elevated utilities and flood-damage-resistant materials reduce repair consequences even when floodwater reaches the site.
+6. Older buildings and poorer-condition buildings are generally more vulnerable.
+7. Multi-story buildings often experience a lower repair cost ratio for the same water depth because the damaged lower level represents a smaller share of the total building replacement value.
+
+Missing data strategy:
+Missing values were inserted after target generation so that the regression target remains fully observed for supervised learning. Each input feature contains randomly distributed missing values represented as NaN. The realized missing-data percentages are:
+- Occupancy_Type: 5.9%
+- Foundation_Type: 5.0%
+- Peak_Inundation_Depth_above_Grade_m: 7.0%
+- Flood_Duration_hr: 9.3%
+- Flow_Velocity_m_per_s: 5.8%
+- First_Floor_Elevation_above_Grade_m: 5.9%
+- Dry_Floodproofing_Height_above_Grade_m: 9.6%
+- Number_of_Stories: 6.3%
+- Gross_Floor_Area_m2: 6.7%
+- Building_Age_yr: 7.2%
+- Structural_Condition_Index: 5.1%
+- Utility_Elevation_above_First_Floor_m: 9.0%
+- Flood_Damage_Resistant_Materials_Share_pct: 8.5%
+
+The target column has no missing values.
+
+Intended educational use:
+This dataset is intended for beginner civil engineering graduate students learning machine learning. It supports:
+- exploratory data analysis
+- missing-data inspection and imputation
+- categorical encoding
+- train/test splitting
+- regression model fitting
+- nonlinear model comparison
+- feature importance analysis
+- residual analysis and model evaluation
+
+Assumptions:
+- The dataset represents non-residential buildings in riverine flood conditions rather than coastal wave-dominated flood environments.
+- Repair_Cost_Ratio_pct is a simplified building-level consequence metric and should not be interpreted as an official FEMA, Hazus, HEC-FIA, or insurance loss estimate.
+- Relationships are inspired by standard flood loss and flood-resistant design concepts, but the dataset is synthetic and intentionally simplified for teaching.
+- The target reflects direct repair consequence relative to building replacement value, not business interruption, content loss, or community-level recovery.
+
+Reference notes used to guide realism:
+- FEMA Hazus flood guidance identifies attributes such as occupancy, foundation, first-floor height, number of stories, flood protection, and replacement cost as important flood-loss inputs.
+- USACE HEC-FIA direct-damage methods are based on depth-percent damage relationships and note that depth-times-velocity thresholds can trigger total loss in severe cases.
+- ASCE 24 flood-resistant design provisions emphasize higher elevations, floodproofing, and flood-damage-resistant materials to reduce flood losses.

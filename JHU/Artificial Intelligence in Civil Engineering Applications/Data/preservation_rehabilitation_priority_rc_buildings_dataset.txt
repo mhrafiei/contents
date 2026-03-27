@@ -1,0 +1,197 @@
+Dataset Name:
+preservation_rehabilitation_priority_rc_buildings_dataset
+
+Problem Statement:
+This synthetic dataset represents preservation engineering assessments of existing reinforced concrete buildings being considered for rehabilitation, restoration, or adaptive reuse. The machine learning task is multiclass classification: predict the recommended rehabilitation priority class from inspection, material-testing, durability, and structural assessment features. The dataset is intended for beginner civil engineering graduate students learning preprocessing, imputation, exploratory data analysis, feature importance, and multiclass classification methods.
+
+Recommended Preservation Engineering Theme Chosen:
+Rehabilitation priority class for existing reinforced concrete buildings under preservation assessment.
+
+Dataset Size and Structure:
+- Rows: 1000
+- Input features: 14
+- Output variables: 1
+- Output column: last column
+- Machine learning task: multiclass classification
+- Number of classes: 5
+
+Target Variable:
+Rehabilitation Priority Class
+
+Target Variable Definition:
+A preservation engineering decision category describing how quickly rehabilitation or stabilization work should be planned after a condition assessment of an existing reinforced concrete building. The class reflects the combined effects of deterioration, structural demand, seismic deficiency, serviceability distress, moisture exposure, and preservation significance.
+
+Five Class Definitions:
+1. Routine Monitoring
+   Meaning: The building shows generally low deterioration and adequate current structural performance. Continue periodic inspection and monitoring, with only minor routine actions as needed.
+   Typical engineering profile: low corrosion probability, small cracks, minimal section loss, low demand-capacity ratio, and low to moderate seismic deficiency.
+
+2. Preventive Maintenance
+   Meaning: Early-stage deterioration or localized water-related problems are present, but structural risk is still low. Preventive actions should be planned in the normal maintenance cycle.
+   Typical engineering profile: small to moderate cracks, modest chloride/carbonation indicators, low section loss, manageable moisture, and demand-capacity ratio generally below critical levels.
+
+3. Scheduled Rehabilitation
+   Meaning: Moderate deterioration or notable code/condition deficiencies are present. Rehabilitation should be programmed within a medium-term capital planning window.
+   Typical engineering profile: moderate cracking, increasing corrosion indicators, moderate carbonation or chloride contamination, moderate structural demand, or higher preservation significance with moderate distress.
+
+4. Urgent Rehabilitation
+   Meaning: Deterioration and/or structural deficiency is significant enough that rehabilitation should not be deferred. Work should be prioritized in the short term.
+   Typical engineering profile: active corrosion likely, wider cracks, larger section loss, demand-capacity ratio near or above 1.0, high moisture burden, and/or elevated seismic deficiency.
+
+5. Immediate Stabilization
+   Meaning: The building shows conditions consistent with potentially unsafe or rapidly worsening behavior and may require shoring, temporary closure, load restriction, or emergency intervention before full rehabilitation.
+   Typical engineering profile: severe combined structural and durability distress, very negative half-cell potentials, large cracks, high section loss, high demand-capacity ratio, and/or severe seismic deficiency.
+
+Observed Class Distribution:
+- Routine Monitoring: 180
+- Preventive Maintenance: 317
+- Scheduled Rehabilitation: 241
+- Urgent Rehabilitation: 157
+- Immediate Stabilization: 105
+
+Feature List:
+1. Structure Age (years)
+   Description: Approximate age of the building at the time of assessment.
+   Unit: years
+   Expected range: 20 to 115
+
+2. Heritage Significance Score (0-100)
+   Description: Ordinal-style preservation significance score derived from age, cultural value, landmark relevance, and conservation importance.
+   Unit: score
+   Expected range: 20 to 100
+
+3. Exposure Severity Score (0-100)
+   Description: Environmental exposure severity considering moisture, urban pollutants, marine salts, deicing salts, and external weathering.
+   Unit: score
+   Expected range: 10 to 95
+
+4. Maintenance Quality Score (0-100)
+   Description: Estimated quality of past maintenance and preventive care based on inspection records and observed upkeep.
+   Unit: score
+   Expected range: 15 to 95
+
+5. Average Core Compressive Strength (MPa)
+   Description: Average compressive strength from core testing or calibrated in-situ equivalent assessment.
+   Unit: MPa
+   Expected range: 14 to 48
+
+6. Average Reinforcement Cover Depth (mm)
+   Description: Average concrete cover over reinforcement based on drawings, GPR, pachometer readings, or local opening-up.
+   Unit: mm
+   Expected range: 12 to 65
+
+7. Carbonation Depth (mm)
+   Description: Measured carbonation penetration depth from phenolphthalein testing or equivalent durability assessment.
+   Unit: mm
+   Expected range: 0.5 to 60
+
+8. Chloride Content at Rebar Depth (% by cement mass)
+   Description: Acid-soluble or comparable chloride content estimated at the reinforcement depth.
+   Unit: percent by mass of cement
+   Expected range: 0.02 to 1.8
+
+9. Half-Cell Potential (mV vs Cu/CuSO4)
+   Description: Corrosion potential measurement of embedded reinforcing steel.
+   Unit: mV vs Cu/CuSO4 reference electrode
+   Expected range: -520 to -80
+
+10. Maximum Surface Crack Width (mm)
+    Description: Largest measured representative structural or durability-related surface crack width observed in the inspected zone.
+    Unit: mm
+    Expected range: 0.02 to 1.60
+
+11. Estimated Reinforcement Section Loss (%)
+    Description: Estimated percentage loss of reinforcing steel cross-section based on inspection, NDT interpretation, and local verification.
+    Unit: percent
+    Expected range: 0 to 30
+
+12. Moisture-Affected Area (% of inspected area)
+    Description: Approximate portion of the inspected area showing dampness, leakage staining, active moisture ingress, or persistent wetting.
+    Unit: percent of inspected area
+    Expected range: 0 to 85
+
+13. Gravity Demand-Capacity Ratio
+    Description: Ratio of assessed gravity load demand to available gravity load capacity for the critical member or governing building-level check.
+    Unit: unitless
+    Expected range: 0.45 to 1.60
+
+14. Seismic Deficiency Index (0-100)
+    Description: Rapid-screening-style index summarizing likely seismic detailing and system deficiencies of the existing building.
+    Unit: score
+    Expected range: 5 to 95
+
+How the Synthetic Data Was Constructed:
+- The dataset was limited to existing reinforced concrete buildings so that material and durability variables remain internally consistent.
+- Buildings were generated from realistic latent drivers such as age cohort, environmental exposure, landmark significance, maintenance history, use intensity, and structural irregularity.
+- Material properties and deterioration indicators were then derived from those latent drivers using engineering-style dependencies rather than independent random sampling.
+- Older buildings tend to have higher heritage significance, higher seismic deficiency, and generally lower average material strength.
+- Higher exposure severity and poorer maintenance increase moisture burden and chloride contamination.
+- Carbonation depth increases with age, lower concrete quality, and poorer maintenance, while reinforcement cover moderates whether carbonation approaches the steel.
+- More severe chloride exposure, higher carbonation-to-cover ratio, and higher moisture lead to more negative half-cell potentials.
+- Estimated reinforcement section loss was derived from corrosion-driving indicators and age to represent cumulative deterioration over time.
+- Demand-capacity ratio depends on use intensity and reduced effective capacity, which is affected by strength, age, and reinforcement section loss.
+- Maximum crack width depends on demand-capacity ratio, section loss, age-related distress, moisture, and corrosion-related bursting effects.
+- Random noise was added at each stage to preserve natural variability and create moderate overlap between classes.
+
+Engineering Logic Behind Class Assignment:
+The target class was assigned from a composite rehabilitation-priority logic using the complete feature set before missing values were introduced. The decision logic combines:
+- durability risk from chloride contamination, carbonation relative to cover, moisture, and half-cell potential
+- material degradation from estimated reinforcement section loss and reduced compressive strength
+- structural risk from gravity demand-capacity ratio and observed cracking
+- life-safety and upgrade urgency from seismic deficiency
+- preservation importance through a modest heritage-significance modifier
+Additional rule-based escalation was used for clearly severe cases, such as combinations of high demand-capacity ratio, large crack width, severe section loss, and/or very negative half-cell potentials. This creates interpretable but nontrivial class boundaries.
+
+Missing Data Strategy:
+- Missing values were introduced only in the 14 input feature columns.
+- Missingness was distributed randomly by column.
+- Missing values are encoded as NaN.
+- The target column contains no missing values.
+- Exact missing percentages by input feature are:
+  - Structure Age (years): 6.8%
+  - Heritage Significance Score (0-100): 7.3%
+  - Exposure Severity Score (0-100): 6.1%
+  - Maintenance Quality Score (0-100): 7.7%
+  - Average Core Compressive Strength (MPa): 6.9%
+  - Average Reinforcement Cover Depth (mm): 5.8%
+  - Carbonation Depth (mm): 8.2%
+  - Chloride Content at Rebar Depth (% by cement mass): 6.4%
+  - Half-Cell Potential (mV vs Cu/CuSO4): 7.1%
+  - Maximum Surface Crack Width (mm): 8.6%
+  - Estimated Reinforcement Section Loss (%): 6.2%
+  - Moisture-Affected Area (% of inspected area): 7.5%
+  - Gravity Demand-Capacity Ratio: 6.6%
+  - Seismic Deficiency Index (0-100): 8.0%
+
+Why the Dataset Is Realistic and Educational:
+- The variables reflect data that preservation and rehabilitation engineers commonly gather from inspection reports, durability testing, screening assessments, and structural evaluation.
+- Relationships are intentionally realistic rather than perfectly separable. For example, some old buildings remain in good condition because of strong maintenance, while some newer buildings still show high priority because of severe exposure, load history, or seismic deficiency.
+- The 5 classes are interpretable engineering decision categories rather than arbitrary numerical bins.
+- Class overlap is moderate, which is useful for teaching beginner machine learning because models must learn trends instead of memorizing obvious thresholds.
+- The dataset supports practical workflows including missing-value imputation, train-test splitting, normalization, multiclass model training, confusion matrices, and feature-importance interpretation.
+
+Assumptions:
+- The dataset represents existing reinforced concrete buildings, not steel or unreinforced masonry buildings.
+- All values are synthetic and should be used for education only, not for actual design, safety decisions, or regulatory compliance.
+- The seismic deficiency index is a screening-style indicator rather than a full nonlinear analysis result.
+- The demand-capacity ratio is an assessment output intended to summarize governing gravity performance; it is not a complete code-check record.
+- The heritage significance score is a simplified educational variable, not a legal designation.
+- Missingness is random by column for teaching imputation and preprocessing.
+
+Reference Basis Used to Anchor Plausible Ranges and Logic:
+- ASTM C876-style interpretation of half-cell potential for corrosion probability.
+- ACI 224 guidance on reasonable crack widths under different exposure conditions.
+- Published chloride threshold and chloride-limit guidance for reinforced concrete.
+- Standard preservation engineering principles relating age, maintenance, exposure, moisture ingress, reinforcement corrosion, cracking, and rehabilitation urgency.
+
+Intended Educational Use:
+This dataset is intended for beginner civil engineering graduate students who are learning machine learning classification in a preservation engineering context. Suitable exercises include:
+- exploratory data analysis
+- missing-value imputation
+- encoding and preprocessing decisions
+- multiclass logistic regression
+- decision trees, random forests, gradient boosting, and support vector machines
+- cross-validation and hyperparameter tuning
+- confusion matrix interpretation
+- feature importance and partial dependence discussion
+- engineering interpretation of classification errors

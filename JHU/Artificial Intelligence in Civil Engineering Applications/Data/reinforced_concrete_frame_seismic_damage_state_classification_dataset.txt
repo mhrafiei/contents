@@ -1,0 +1,177 @@
+Dataset Name:
+reinforced_concrete_frame_seismic_damage_state_classification_dataset
+
+Problem Statement:
+This dataset is a synthetic but engineering-grounded tabular dataset for multiclass classification in Structural Engineering. Each row represents a reinforced concrete (RC) moment-resisting frame building subjected to a scenario earthquake. The objective is to classify the post-earthquake structural damage state of the building from commonly used building, site, shaking, and response features.
+
+Target Variable:
+Damage State
+
+Target Variable Definition:
+Damage State is a 5-class categorical label describing the structural damage severity of an RC moment-resisting frame building after earthquake shaking. The label reflects a realistic combination of transient drift demand, residual drift, seismic demand intensity, structural irregularity, age/detailing effects, axial load effects, and material/detailing proxies.
+
+Five Damage Classes:
+1. None_or_Insignificant
+   Structural damage is absent or negligible. The building may have no visible structural cracking or only negligible effects that do not indicate meaningful damage to the lateral-force-resisting system.
+
+2. Slight
+   Hairline flexural or shear cracking may be present near joints or in some beams/columns, but the frame remains essentially elastic or only mildly inelastic. Repair is expected to be relatively limited.
+
+3. Moderate
+   Widespread cracking is expected, with some yielding and localized concrete spalling. Structural repair is needed, but global lateral stability is generally maintained.
+
+4. Extensive
+   Large flexural/shear cracks, substantial spalling, local reinforcement distress, or significant strength/stiffness degradation are expected. Partial local failure mechanisms or severe instability concerns may develop.
+
+5. Complete
+   Collapse or imminent collapse is expected, or damage is severe enough to indicate loss of reliable lateral stability. In this dataset, very large drift demand and/or high residual drift can trigger this class.
+
+Input Features (13 total):
+1. Construction Year
+   Description: Building construction year used as a proxy for seismic code era and ductile detailing practice.
+   Unit: year
+   Expected Range: 1955 to 2024
+
+2. Number of Stories
+   Description: Total number of above-ground stories in the building.
+   Unit: count
+   Expected Range: 2 to 18
+
+3. Fundamental Period (s)
+   Description: Estimated first-mode fundamental period of the building.
+   Unit: seconds
+   Expected Range: 0.20 to 2.80
+
+4. Concrete Compressive Strength (MPa)
+   Description: Representative concrete compressive strength for primary RC frame elements.
+   Unit: MPa
+   Expected Range: 18 to 52
+
+5. Longitudinal Reinforcement Ratio (%)
+   Description: Representative longitudinal reinforcement ratio of critical frame members/columns.
+   Unit: percent
+   Expected Range: 0.80 to 2.90
+
+6. Column Axial Load Ratio
+   Description: Representative normalized axial load ratio in critical columns.
+   Unit: dimensionless
+   Expected Range: 0.08 to 0.42
+
+7. Plan Irregularity Index
+   Description: Normalized index of plan irregularity severity, where larger values indicate greater torsional or geometric irregularity.
+   Unit: dimensionless
+   Expected Range: 0.02 to 0.80
+
+8. Vertical Irregularity Index
+   Description: Normalized index of vertical irregularity severity, where larger values indicate stronger soft-story, setback, or vertical discontinuity effects.
+   Unit: dimensionless
+   Expected Range: 0.01 to 0.92
+
+9. Site Vs30 (m/s)
+   Description: Time-averaged shear-wave velocity in the upper 30 m of soil, used as a standard site-condition parameter.
+   Unit: m/s
+   Expected Range: 150 to 1100
+
+10. Peak Ground Acceleration (g)
+    Description: Scenario earthquake peak ground acceleration at the site.
+    Unit: g
+    Expected Range: 0.05 to 0.88
+
+11. Spectral Acceleration at T1 (g)
+    Description: 5%-damped spectral acceleration near the building fundamental period.
+    Unit: g
+    Expected Range: 0.05 to 2.20
+
+12. Peak Interstory Drift Ratio (%)
+    Description: Maximum transient interstory drift ratio during the earthquake.
+    Unit: percent
+    Expected Range: 0.03 to 6.20
+
+13. Residual Drift Ratio (%)
+    Description: Residual interstory drift ratio after shaking.
+    Unit: percent
+    Expected Range: 0.00 to 3.20
+
+How the Synthetic Data Was Constructed:
+- Hidden building archetypes (residential, office, mixed-use, institutional) were used internally to create realistic variation in story count, story height, and structural proportions.
+- Construction year was used as a proxy for code era and likely ductile detailing quality, while a hidden retrofit flag and hidden quality factor were added to prevent unrealistic one-to-one relationships.
+- Fundamental period was generated from building height using a standard approximate RC moment-frame period relationship with moderate scatter.
+- Concrete strength and reinforcement ratio were generated with realistic dependence on construction era, building size, archetype, and variability.
+- Axial load ratio, plan irregularity, and vertical irregularity were generated as correlated but imperfect indicators of structural vulnerability.
+- Site Vs30 was sampled from realistic NEHRP-like site ranges, and spectral acceleration was generated from PGA, site amplification, and period-resonance effects.
+- Peak interstory drift ratio was generated from seismic demand and a vulnerability/capacity balance, so that stronger shaking, softer sites, poor detailing, larger irregularity, and higher axial load generally increase drift.
+- Residual drift ratio was derived from peak drift using a simplified FEMA P-58-inspired piecewise relationship tied to yield drift, with added scatter.
+
+Engineering Logic Behind Class Assignment:
+- The class assignment is not an arbitrary binning exercise. It is based on a latent damage measure built primarily from peak interstory drift ratio and residual drift ratio, then modified by seismic demand intensity, construction era, irregularity, axial load ratio, and soft-soil effects.
+- Older and more irregular buildings can reach higher damage states at the same transient drift than newer, better-detailed buildings.
+- Large residual drift increases the chance of severe tagging outcomes because it indicates permanent deformation and possible loss of re-occupancy or lateral stability margin.
+- Very high drift demand or residual drift can force the Complete class, consistent with imminent-collapse or irreparable-damage logic.
+
+Approximate Class Interpretation in Terms of Drift:
+- None_or_Insignificant: typically very low drift, usually below about 0.2 to 0.3 percent, with negligible residual drift.
+- Slight: generally low drift with hairline cracking, often around roughly 0.2 to 0.8 percent.
+- Moderate: commonly associated with more widespread cracking and yielding, often around roughly 0.7 to 1.8 percent.
+- Extensive: commonly associated with severe cracking, spalling, and major damage, often around roughly 1.5 to 3.5 percent.
+- Complete: typically associated with very high drift demand, very high residual drift, or collapse-prone vulnerability combinations.
+These drift interpretations are approximate only; the final label also depends on the other predictors.
+
+Class Distribution in the Final Dataset:
+- None_or_Insignificant: 201 rows
+- Slight: 309 rows
+- Moderate: 284 rows
+- Extensive: 129 rows
+- Complete: 77 rows
+
+Missing Data Strategy:
+- Missing values were inserted independently into each input feature column after the target class was assigned from the complete synthetic structural response state.
+- Missing values are randomly distributed and represented as NaN.
+- The target column contains no missing values.
+- Actual missingness by input feature in the final file:
+- Construction Year: 9.6% missing values (96 of 1000 rows)
+- Number of Stories: 6.9% missing values (69 of 1000 rows)
+- Fundamental Period (s): 6.3% missing values (63 of 1000 rows)
+- Concrete Compressive Strength (MPa): 5.4% missing values (54 of 1000 rows)
+- Longitudinal Reinforcement Ratio (%): 6.3% missing values (63 of 1000 rows)
+- Column Axial Load Ratio: 8.6% missing values (86 of 1000 rows)
+- Plan Irregularity Index: 9.3% missing values (93 of 1000 rows)
+- Vertical Irregularity Index: 7.6% missing values (76 of 1000 rows)
+- Site Vs30 (m/s): 9.5% missing values (95 of 1000 rows)
+- Peak Ground Acceleration (g): 7.8% missing values (78 of 1000 rows)
+- Spectral Acceleration at T1 (g): 6.4% missing values (64 of 1000 rows)
+- Peak Interstory Drift Ratio (%): 6.8% missing values (68 of 1000 rows)
+- Residual Drift Ratio (%): 7.0% missing values (70 of 1000 rows)
+
+Why the Dataset Is Realistic:
+- The ranges of concrete strength, reinforcement ratio, axial load ratio, period, Vs30, PGA, spectral acceleration, peak drift, and residual drift are all chosen to be plausible for RC building earthquake engineering studies.
+- Important engineering dependencies are preserved:
+  * taller buildings tend to have longer periods
+  * newer buildings tend to have somewhat better materials/detailing on average
+  * soft sites amplify spectral demand
+  * irregularity and high axial load tend to worsen seismic response
+  * residual drift depends nonlinearly on peak drift
+- The target classes overlap moderately in predictor space because real structures with similar shaking intensity can experience different damage outcomes depending on age, detailing, irregularity, and capacity.
+
+Intended Educational Use:
+This dataset is designed for beginner graduate students in Civil Engineering who are learning classification machine learning methods. It is suitable for:
+- data cleaning and missing-value imputation
+- exploratory data analysis
+- feature scaling and train/test splitting
+- multiclass classification
+- confusion matrices and class-wise metrics
+- feature importance and model interpretation
+- discussions about how engineering assumptions influence data generation and prediction performance
+
+Assumptions:
+- Each row represents a building-earthquake scenario, not a detailed nonlinear finite-element simulation output.
+- The buildings are treated as reinforced concrete moment-resisting frame structures, not wall-dominated systems.
+- Hidden retrofit and quality effects were used only to create more realistic overlap and variability; they are not included as features.
+- The drift-based damage logic is a simplified educational representation, not a substitute for project-specific nonlinear seismic assessment.
+
+Informative Engineering References Used to Shape Ranges and Logic:
+- FEMA HAZUS damage state descriptions for reinforced concrete moment resisting frames
+- FEMA P-58 residual drift damage states and residual drift concepts
+- USGS / ASCE site class boundaries based on Vs30
+- ASCE approximate period coefficients for concrete moment-resisting frames
+- NIST / ATC guidance on older nonductile concrete building vulnerability and drift-based evaluation
+- Typical normal-strength concrete property ranges and ACI-style reinforcement bounds

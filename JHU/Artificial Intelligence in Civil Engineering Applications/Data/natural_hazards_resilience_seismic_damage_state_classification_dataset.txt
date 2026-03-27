@@ -1,0 +1,154 @@
+Dataset Name: natural_hazards_resilience_seismic_damage_state_classification_dataset
+
+Problem Statement:
+This synthetic dataset represents building-by-earthquake scenario cases for teaching beginner civil engineering graduate students how to perform multiclass classification in natural hazards resilience design. The educational task is to classify the post-earthquake structural damage state of a building using realistic building characteristics, site conditions, hazard intensity measures, and simplified response indicators.
+
+Chosen Classification Problem:
+Post-earthquake building damage state classification for seismic resilience screening.
+
+Target Variable:
+Damage_State_Class
+Definition: Final building-level damage state category after a scenario earthquake, based on a synthetic but engineering-grounded damage logic that combines demand, capacity, vulnerability, and uncertainty.
+
+Five Target Classes:
+1. No_Damage
+   Meaning: No meaningful structural damage. Building may require inspection but is generally expected to retain serviceability.
+2. Slight
+   Meaning: Minor cracking or localized damage with little loss of global lateral strength or stiffness.
+3. Moderate
+   Meaning: Noticeable structural damage and reduced performance, but repair is generally feasible.
+4. Extensive
+   Meaning: Severe structural damage with major repair needs, large downtime, and low immediate operability.
+5. Complete
+   Meaning: Near-collapse, partial collapse, or damage so severe that replacement or demolition becomes plausible.
+
+Class Distribution in This Dataset:
+- No_Damage: 180 rows (18.0%)
+- Slight: 313 rows (31.3%)
+- Moderate: 206 rows (20.6%)
+- Extensive: 160 rows (16.0%)
+- Complete: 141 rows (14.1%)
+
+Input Features:
+- Structural_System
+  Description: Primary lateral force-resisting system of the building.
+  Unit: category
+  Expected Range: Steel_Moment_Frame; Steel_Braced_Frame; RC_Moment_Frame; RC_Shear_Wall; Unreinforced_Masonry
+- Number_of_Stories
+  Description: Total above-grade stories.
+  Unit: count
+  Expected Range: 1 to 20
+- Construction_Year
+  Description: Approximate year of original construction.
+  Unit: year
+  Expected Range: 1950 to 2022
+- Seismic_Design_Level
+  Description: Proxy for code era and seismic detailing quality.
+  Unit: category
+  Expected Range: Pre_Code; Low_Code; Moderate_Code; High_Code
+- Site_Class
+  Description: NEHRP-style site class proxy for local soil stiffness.
+  Unit: category
+  Expected Range: B; C; D; E
+- Plan_Irregularity_Index
+  Description: Dimensionless index representing torsional, setback, or re-entrant plan irregularity severity.
+  Unit: dimensionless
+  Expected Range: 0.01 to 0.53
+- Retrofit_Level
+  Description: Level of completed seismic retrofit before the earthquake.
+  Unit: category
+  Expected Range: No_Retrofit; Partial_Retrofit; Extensive_Retrofit
+- Peak_Ground_Acceleration_g
+  Description: Site-level peak ground acceleration experienced during the scenario earthquake.
+  Unit: g
+  Expected Range: 0.05 to 0.83
+- Spectral_Acceleration_1p0s_g
+  Description: 5%-damped spectral acceleration at 1.0 s at the building site.
+  Unit: g
+  Expected Range: 0.06 to 1.49
+- Design_Base_Shear_Ratio
+  Description: Proxy for lateral design strength expressed as base shear divided by building weight, V/W.
+  Unit: dimensionless
+  Expected Range: 0.03 to 0.20
+- Redundancy_Index
+  Description: Dimensionless proxy for alternate load paths and frame/wall redundancy.
+  Unit: dimensionless
+  Expected Range: 0.70 to 1.21
+- Estimated_Peak_Interstory_Drift_Ratio_pct
+  Description: Estimated maximum transient interstory drift ratio during shaking.
+  Unit: percent
+  Expected Range: 0.08 to 5.50
+- Residual_Drift_Ratio_pct
+  Description: Estimated permanent post-shaking interstory drift ratio.
+  Unit: percent
+  Expected Range: 0.00 to 1.80
+
+How the Synthetic Data Was Constructed:
+1. Each row represents a building exposed to a scenario earthquake. Buildings were generated with realistic combinations of structural system, height, age, code era, site class, irregularity, retrofit level, and design strength proxy.
+2. Structural system and story count were coupled so that low-rise unreinforced masonry is common, while taller buildings are more likely to be steel or reinforced-concrete systems.
+3. Construction year influences seismic design level. Older buildings are more likely to be Pre_Code or Low_Code, while newer buildings are more likely to be Moderate_Code or High_Code.
+4. Site-level hazard variables were generated using a rock-motion severity variable modified by site amplification. Peak_Ground_Acceleration_g and Spectral_Acceleration_1p0s_g are correlated but not identical.
+5. Design_Base_Shear_Ratio and Redundancy_Index act as simplified capacity indicators. They are influenced by structural system, code era, retrofit level, and building height.
+6. Estimated_Peak_Interstory_Drift_Ratio_pct is generated from hazard demand, site amplification, structural flexibility, irregularity, strength proxy, redundancy, and retrofit effects.
+7. Residual_Drift_Ratio_pct is generated as a nonlinear function of peak drift beyond an approximate yield-drift threshold, with higher scatter for older and more flexible systems.
+8. Damage classes are assigned from a system-specific equivalent demand measure. The demand measure increases mainly with transient drift, residual drift, PGA, and Sa(1.0s). The damage thresholds are shifted upward or downward according to design level, retrofit, design strength proxy, redundancy, irregularity, and construction year.
+9. Random uncertainty is added at the damage-assignment stage to create moderate overlap among classes, so the problem is realistic and not trivially separable.
+
+Engineering Logic Behind Class Assignment:
+- The five classes follow the standard earthquake damage-state idea used in seismic loss assessment: No_Damage, Slight, Moderate, Extensive, and Complete.
+- Peak interstory drift is the primary structural demand indicator because structural and nonstructural damage generally increase with drift demand.
+- Residual drift is included because permanent deformation strongly affects reparability and post-earthquake operability.
+- Softer site classes increase amplified shaking and therefore tend to increase damage demand.
+- Older code eras and weaker design-base-shear ratios reduce capacity.
+- Higher redundancy and stronger retrofit levels improve resilience and shift damage thresholds upward.
+- Buildings with higher plan irregularity have more concentrated demand and therefore lower effective damage thresholds.
+- Unreinforced masonry has the lowest effective thresholds, while modern shear wall and well-detailed braced systems generally perform better at a given hazard intensity.
+
+Missing Data Strategy:
+Missing values were introduced independently and randomly across input columns only. Missingness is represented as NaN.
+- Structural_System: 70 missing values (7%)
+- Number_of_Stories: 60 missing values (6%)
+- Construction_Year: 80 missing values (8%)
+- Seismic_Design_Level: 70 missing values (7%)
+- Site_Class: 60 missing values (6%)
+- Plan_Irregularity_Index: 90 missing values (9%)
+- Retrofit_Level: 70 missing values (7%)
+- Peak_Ground_Acceleration_g: 60 missing values (6%)
+- Spectral_Acceleration_1p0s_g: 80 missing values (8%)
+- Design_Base_Shear_Ratio: 70 missing values (7%)
+- Redundancy_Index: 60 missing values (6%)
+- Estimated_Peak_Interstory_Drift_Ratio_pct: 90 missing values (9%)
+- Residual_Drift_Ratio_pct: 70 missing values (7%)
+The target column Damage_State_Class contains no missing values.
+
+Intended Educational Use:
+- Handling mixed numeric and categorical predictors
+- Missing-data exploration and imputation
+- Exploratory data analysis and correlation review
+- Feature engineering and categorical encoding
+- Training and comparing multiclass classification models
+- Confusion matrices, precision/recall, macro-F1, and class-imbalance discussion
+- Interpreting feature importance in an engineering context
+
+Assumptions:
+- The dataset is scenario-based and is not tied to one specific city or one single real earthquake record.
+- Values are intended to be plausible for buildings in moderate-to-high seismic regions.
+- Design_Base_Shear_Ratio and Redundancy_Index are simplified educational proxies rather than direct code-check outputs.
+- Drift quantities are treated as estimated values from analysis, structural monitoring, or rapid assessment rather than exact measurements.
+- The dataset is meant for classroom machine learning practice, not for real design approval, forensic engineering, or regulatory use.
+
+Reference Basis Used During Design:
+- FEMA Hazus earthquake documentation and data dictionary for building damage-state terminology, structural-system categories, site class use, PGA, Sa(1.0s), and design-level concepts.
+  https://hazards.fema.gov/hazus-loss-library/docs/data-dictionaries/EQDataDictionary.pdf
+  https://www.fema.gov/sites/default/files/documents/fema-hazus-6.1-earthquake-model-user-guidance.pdf
+- USGS summary of NEHRP site classification and site amplification concepts.
+  https://www.usgs.gov/publications/new-site-coefficients-and-site-classification-system-used-recent-building-seismic-code-provisions
+- FEMA P-58 residual drift and transient drift concepts for post-earthquake performance and reparability.
+  https://www.usrc.org/wp-content/uploads/FEMA_P-58-1-SE_Volume1_Methodology.pdf
+- FEMA seismic retrofit guidance and FEMA irregularity studies used qualitatively to shape capacity and vulnerability trends.
+  https://www.fema.gov/sites/default/files/documents/fema_technical-job-aid-seismic-retrofit.pdf
+  https://www.fema.gov/sites/default/files/2020-08/fema_assessing-seismic-performance-irregularities_p-2012.pdf
+
+File Notes:
+- CSV file name: natural_hazards_resilience_seismic_damage_state_classification_dataset.csv
+- TXT file name: natural_hazards_resilience_seismic_damage_state_classification_dataset.txt

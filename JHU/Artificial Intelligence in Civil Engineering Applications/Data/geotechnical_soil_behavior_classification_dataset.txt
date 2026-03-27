@@ -1,0 +1,160 @@
+Dataset Name:
+geotechnical_soil_behavior_classification_dataset
+
+Problem Statement:
+This synthetic dataset is designed for teaching beginner civil engineering graduate students how to apply multiclass classification machine learning methods to a realistic geotechnical engineering problem. The task is to predict a broad soil behavior class from commonly measured laboratory and field parameters.
+
+Chosen Classification Problem:
+Broad soil behavior classification inspired by standard geotechnical practice and the Unified Soil Classification System (USCS), aggregated into five beginner-friendly classes.
+
+Target Variable:
+Soil Behavior Class
+
+Target Variable Definition:
+Soil Behavior Class is a five-class categorical variable representing the dominant engineering behavior of the soil based on gradation and plasticity indicators.
+
+Five Classes:
+1. Gravelly Soil
+   Description: Coarse-grained soil dominated by gravel-sized particles with low fines content and low plasticity.
+   Broad engineering basis: Less than 50% passing the No. 200 sieve and less than 50% passing the No. 4 sieve.
+
+2. Sandy Soil
+   Description: Coarse-grained soil dominated by sand-sized particles, typically with low to moderate fines and low plasticity.
+   Broad engineering basis: Less than 50% passing the No. 200 sieve and 50% or more passing the No. 4 sieve.
+
+3. Silty Soil
+   Description: Fine-grained soil with silt-like behavior, generally plotting below or near the A-line on the plasticity chart.
+   Broad engineering basis: 50% or more passing the No. 200 sieve, with plasticity index below the clay-dominant range.
+
+4. Low-Plasticity Clay
+   Description: Fine-grained clayey soil with liquid limit below 50 and plasticity index above the A-line.
+   Broad engineering basis: 50% or more passing the No. 200 sieve, clay-like plasticity, LL < 50.
+
+5. High-Plasticity Clay
+   Description: Fine-grained clayey soil with high liquid limit and high plasticity.
+   Broad engineering basis: 50% or more passing the No. 200 sieve, clay-like plasticity, LL >= 50.
+
+Class Distribution in This Dataset:
+- Gravelly Soil: 180 rows
+- Sandy Soil: 250 rows
+- Silty Soil: 210 rows
+- Low-Plasticity Clay: 220 rows
+- High-Plasticity Clay: 140 rows
+
+Input Features:
+1. Natural Moisture Content (%)
+   Description: Gravimetric water content of the in situ sample.
+   Unit: %
+   Expected Range: about 2 to 70
+
+2. Bulk Unit Weight (kN/m^3)
+   Description: Total or moist unit weight of the soil sample.
+   Unit: kN/m^3
+   Expected Range: about 14 to 23
+
+3. Dry Unit Weight (kN/m^3)
+   Description: Dry unit weight of the soil sample.
+   Unit: kN/m^3
+   Expected Range: about 11 to 22
+
+4. Specific Gravity of Solids (-)
+   Description: Specific gravity of the soil solids.
+   Unit: dimensionless
+   Expected Range: about 2.62 to 2.80
+
+5. Percent Passing No. 4 Sieve (%)
+   Description: Percentage of soil finer than the No. 4 sieve (4.75 mm).
+   Unit: %
+   Expected Range: about 0 to 100
+
+6. Percent Passing No. 40 Sieve (%)
+   Description: Percentage of soil finer than the No. 40 sieve (0.425 mm).
+   Unit: %
+   Expected Range: about 0 to 100
+
+7. Percent Passing No. 200 Sieve (%)
+   Description: Percentage of soil finer than the No. 200 sieve (0.075 mm), commonly used to distinguish coarse-grained and fine-grained soils.
+   Unit: %
+   Expected Range: about 0 to 100
+
+8. Median Particle Size D50 (mm)
+   Description: Particle size at which 50% of the sample is finer.
+   Unit: mm
+   Expected Range: about 0.001 to 30
+
+9. Coefficient of Uniformity Cu (-)
+   Description: Gradation descriptor derived from particle-size distribution.
+   Unit: dimensionless
+   Expected Range: about 2 to 20
+
+10. Liquid Limit (%)
+    Description: Water content at the liquid limit from Atterberg limit testing.
+    Unit: %
+    Expected Range: about 15 to 95
+
+11. Plasticity Index (%)
+    Description: Difference between liquid limit and plastic limit, representing the plastic range.
+    Unit: %
+    Expected Range: about 0 to 65
+
+12. Standard Penetration Test N60 (blows/0.3 m)
+    Description: Corrected SPT blow count used as an index of relative density or consistency.
+    Unit: blows per 0.3 m
+    Expected Range: about 1 to 60
+
+How the Synthetic Data Was Constructed:
+- The dataset was generated from engineering-informed latent variables rather than arbitrary random numbers.
+- Particle-size behavior was represented using a lognormal-style gradation concept with class-dependent D50 and Cu values, then converted into realistic sieve passing percentages.
+- Fine-grained classes were differentiated using liquid limit and plasticity index in a broad USCS-inspired manner, including the A-line concept and the liquid limit threshold at 50.
+- Dry unit weight, bulk unit weight, and natural moisture content were generated to be internally consistent with standard soil phase relationships.
+- Specific gravity was kept within realistic ranges for common inorganic soils.
+- Standard penetration resistance was generated to vary with density/void ratio, water content, particle size, and plasticity so that coarse dense soils tend to have higher N60 values than soft, wet, highly plastic clays.
+- Random variability was intentionally included so that the classes overlap moderately and the machine learning task is educational rather than trivial.
+
+Engineering Logic Behind Class Assignment:
+The target class was assigned using broad engineering rules inspired by standard soil classification practice:
+- Coarse-grained versus fine-grained behavior was primarily controlled by percent passing the No. 200 sieve.
+- Gravelly versus sandy behavior was primarily controlled by percent passing the No. 4 sieve within coarse-grained soils.
+- Silt-like versus clay-like behavior in fine-grained soils was controlled by liquid limit and plasticity index relative to the plasticity chart A-line.
+- High-plasticity clay was identified by clay-like plasticity combined with liquid limit at or above 50.
+These rules produce classes that are realistic, interpretable, and suitable for educational classification exercises.
+
+Missing Data Strategy:
+- Every input feature column contains exactly 70 missing values out of 1000 rows, which is 7% missingness per feature.
+- Missingness was inserted independently and randomly by column.
+- Missing values are represented as NaN.
+- The target column contains no missing values.
+
+Intended Educational Use:
+This dataset is intended for beginner machine learning exercises in geotechnical engineering, including:
+- handling missing data and imputation
+- exploratory data analysis
+- feature scaling and preprocessing
+- correlation review and engineering interpretation
+- training multiclass classifiers
+- comparing algorithms such as logistic regression, decision trees, random forests, and gradient boosting
+- model evaluation using confusion matrices, precision, recall, F1-score, and feature importance
+
+Assumptions:
+- The classes are broad engineering behavior groups, not exact ASTM D2487 group symbols.
+- Organic soils, peat, collapsible soils, and expansive soil mineralogy effects were excluded to keep the problem beginner-friendly.
+- All soils are treated as inorganic mineral soils for this educational dataset.
+- Some laboratory measurements that may be omitted in practice for very clean coarse soils were still given numeric values here to keep the tabular dataset suitable for machine learning.
+- Values were rounded to practical reporting precision.
+
+Reference Basis Used for Realism:
+1. FHWA overview of USCS concepts, fines threshold, and Atterberg limits:
+   https://www.fhwa.dot.gov/pavement/materials/hmec/pubs/module_b/lesson03_wbt.pdf
+
+2. FHWA grain-size ranges for gravel, sand, and fines:
+   https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05a.cfm
+
+3. NRCS plasticity chart guidance and A-line expression:
+   https://directives.nrcs.usda.gov/sites/default/files2/1712930846/31760.pdf
+
+4. FHWA dry unit weight and moist unit weight relationship:
+   https://www.ce.memphis.edu/4151/Documents/FHWA%20Geotech%20Engg%20Circular%20No%205.pdf
+
+5. USBR and Caltrans references on SPT use for density/consistency and unit weight correlations:
+   https://www.usbr.gov/tsc/techreferences/mands/geologyfieldmanual-vol2/Chapter22.pdf
+   https://dot.ca.gov/-/media/dot-media/programs/engineering/documents/geotechnical-services/202103-gm-soilcorrelations-a11y.pdf

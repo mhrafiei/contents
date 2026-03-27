@@ -1,0 +1,129 @@
+Dataset Name:
+geotechnical_soaked_cbr_dataset
+
+Problem Statement:
+Predict the soaked California Bearing Ratio (CBR) of compacted subgrade soils using routinely measured gradation, Atterberg limit, moisture, and compaction properties. The dataset is intended for regression-based machine learning exercises in civil and geotechnical engineering education.
+
+Target Variable Definition:
+Soaked_CBR_Percent
+- Definition: Laboratory soaked California Bearing Ratio of the compacted specimen.
+- Unit: %
+- Role in ML: Single continuous regression target
+- Position in CSV: Last column
+- Missing values: None
+
+Feature List:
+- Gravel_Content_Percent
+  Description: Percentage by dry mass retained on the coarse fraction; represents the gravel portion of the soil skeleton.
+  Unit: %
+  Expected Range: 0.0 to 48.1
+- Sand_Content_Percent
+  Description: Percentage by dry mass in the sand-size range; computed so gravel + sand + fines = 100%.
+  Unit: %
+  Expected Range: 22.1 to 78.3
+- Fines_Content_Percent
+  Description: Percentage by dry mass passing the No. 200 sieve; includes silt and clay.
+  Unit: %
+  Expected Range: 8.7 to 76.8
+- Clay_Size_Fraction_Percent
+  Description: Percentage of particles in the clay-size range (subset of fines), representing the more active fraction measured by hydrometer analysis.
+  Unit: %
+  Expected Range: 0.2 to 72.8
+- Liquid_Limit_Percent
+  Description: Liquid limit from the Atterberg limits test; water content at the plastic-to-liquid boundary.
+  Unit: %
+  Expected Range: 20.0 to 74.0
+- Plastic_Limit_Percent
+  Description: Plastic limit from the Atterberg limits test; water content at the semi-solid to plastic boundary.
+  Unit: %
+  Expected Range: 13.7 to 37.2
+- Plasticity_Index_Percent
+  Description: Plasticity index, defined as liquid limit minus plastic limit (PI = LL - PL).
+  Unit: %
+  Expected Range: 2.0 to 39.9
+- Specific_Gravity_of_Solids
+  Description: Specific gravity of soil solids measured by pycnometer; reflects mineral composition.
+  Unit: -
+  Expected Range: 2.630 to 2.750
+- Natural_Moisture_Content_Percent
+  Description: Measured natural water content of the sampled soil prior to compaction/testing.
+  Unit: %
+  Expected Range: 4.0 to 25.3
+- Optimum_Moisture_Content_Percent
+  Description: Optimum moisture content from the Standard Proctor compaction relationship.
+  Unit: %
+  Expected Range: 6.0 to 21.7
+- Maximum_Dry_Density_kN_per_m3
+  Description: Maximum dry density from Standard Proctor compaction.
+  Unit: kN/m^3
+  Expected Range: 15.80 to 21.30
+- Degree_of_Compaction_Percent
+  Description: Compaction level expressed as achieved dry density divided by maximum dry density times 100.
+  Unit: %
+  Expected Range: 91.5 to 103.0
+
+How the Synthetic Data Was Constructed:
+1. The dataset was built around four latent soil families that are common in pavement and subgrade work: granular soils with fines, silty soils, lean clays, and fat clays.
+2. For each synthetic sample, the particle-size distribution was generated first so that gravel, sand, and fines sum to 100% by dry mass.
+3. The clay-size fraction was generated as a realistic subset of the fines content.
+4. Atterberg limits were then generated from the clay-size fraction, fines content, and a hidden mineral activity factor. Plasticity index was constrained so that PI = LL - PL after rounding.
+5. Specific gravity, optimum moisture content, maximum dry density, natural moisture content, and degree of compaction were generated from physically plausible dependencies that reflect standard geotechnical behavior.
+6. The soaked CBR target was generated from a nonlinear strength model with realistic dependence on gradation, plasticity, clay fraction, moisture condition relative to optimum, and compaction state.
+7. Moderate hidden variability and test noise were added so the relationships are realistic enough for ML learning but not unrealistically perfect.
+
+Engineering Logic Behind the Relationships:
+- Coarser soils with more gravel and sand generally produce higher soaked CBR than soils dominated by fines.
+- Higher fines content, higher clay-size fraction, higher liquid limit, and higher plasticity index generally reduce soaked CBR because they indicate more compressible and moisture-sensitive material.
+- Maximum dry density and degree of compaction increase CBR because denser compaction improves penetration resistance.
+- Natural moisture content close to the optimum moisture content tends to improve compacted behavior; larger deviations tend to reduce CBR.
+- Specific gravity was kept within realistic mineral-soil ranges and was weakly correlated with the finer and more clay-rich soils.
+- The resulting dataset intentionally includes correlated features, some redundancy, and nonlinear effects to support educational ML tasks such as preprocessing, imputation, feature selection, and model comparison.
+
+Missing Data Strategy:
+- Missing values were introduced only in the input features.
+- Missingness was assigned independently and randomly for each input column.
+- Each input feature contains between 5% and 10% missing values, represented as NaN.
+- The exact missing percentages are:
+- Gravel_Content_Percent: 7.5% missing
+- Sand_Content_Percent: 8.7% missing
+- Fines_Content_Percent: 9.8% missing
+- Clay_Size_Fraction_Percent: 9.4% missing
+- Liquid_Limit_Percent: 9.9% missing
+- Plastic_Limit_Percent: 9.2% missing
+- Plasticity_Index_Percent: 9.8% missing
+- Specific_Gravity_of_Solids: 8.0% missing
+- Natural_Moisture_Content_Percent: 8.3% missing
+- Optimum_Moisture_Content_Percent: 8.2% missing
+- Maximum_Dry_Density_kN_per_m3: 8.6% missing
+- Degree_of_Compaction_Percent: 8.2% missing
+- The target column contains no missing values so students can focus on supervised regression workflows without target-data leakage or row deletion caused by missing outputs.
+
+Intended Educational Use:
+- Introductory regression modeling in civil engineering
+- Data cleaning and NaN handling
+- Simple and advanced imputation methods
+- Exploratory data analysis and visualization
+- Correlation assessment and multicollinearity discussion
+- Train/validation/test splitting
+- Feature importance and model interpretation
+- Comparison of linear regression, tree-based models, and ensemble regressors
+
+Assumptions:
+- The dataset represents compacted subgrade soils rather than clean base-course aggregates or highly organic soils.
+- Fully nonplastic clean sands and gravels were intentionally excluded so that all records can be represented with numeric Atterberg limit variables instead of qualitative labels such as NP.
+- Values are designed to be realistic for teaching and model development, but they are synthetic and should not be used for project design without site-specific investigation and laboratory testing.
+- Degree_of_Compaction_Percent can slightly exceed 100% because field or laboratory specimens can occasionally exceed the reference Proctor maximum dry density.
+
+References Used to Inform Ranges and Logic:
+- FHWA, Geotechnical Aspects of Pavements, Chapter 5 and Table 5-27 / related sections on CBR:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05b.cfm
+- FHWA reference manual note that typical values are often discussed at optimum moisture and density conditions:
+  https://www.fhwa.dot.gov/engineering/geotech/pubs/05037/05b.cfm
+- Pavement Interactive, California Bearing Ratio typical ranges by USCS soil group:
+  https://pavementinteractive.org/reference-desk/design/design-parameters/california-bearing-ratio/
+- Transportation Research Board, Moisture Content and the CBR Method of Design (bearing value increases with density for comparable molding moisture conditions):
+  https://onlinepubs.trb.org/Onlinepubs/sr/sr40/sr40-022.pdf
+- NYSDOT test method note defining plasticity index as liquid limit minus plastic limit:
+  https://www.dot.ny.gov/divisions/engineering/technical-services/technical-services-repository/GTM-7b.pdf
+- Geoengineer, typical specific gravity of soil solids:
+  https://www.geoengineer.org/education/laboratory-testing/measurement-of-specific-gravity-of-soils

@@ -1,0 +1,188 @@
+Dataset Name
+coastal_erosion_risk_classification_dataset
+
+Problem Statement
+This dataset represents 1200 synthetic coastal shoreline segments for teaching beginner civil engineering graduate students how to apply multiclass classification methods to an Ocean and Coastal Engineering problem. The task is to classify the likely coastal erosion risk category of each shoreline segment using hydrodynamic forcing indicators, beach-dune morphology, sediment characteristics, and long-term change indicators.
+
+Dataset Summary
+- Domain: Civil Engineering
+- Focus area: Ocean and Coastal Engineering
+- Machine learning task: Multiclass classification
+- Number of rows: 1200
+- Number of input features: 13
+- Number of output variables: 1
+- Output column: Coastal Erosion Risk Class
+- Missing values: present only in input features, represented as NaN
+- Target classes: 5
+
+Target Variable Definition
+Target name: Coastal Erosion Risk Class
+
+The target variable describes the interpreted erosion susceptibility of a sandy coastal segment. It combines:
+1. acute storm impact potential, represented by a total water level proxy relative to dune crest elevation,
+2. chronic shoreline change pressure, represented by historical shoreline change rate, sediment budget balance, and relative sea-level rise,
+3. morphological resistance, represented by beach width, dune elevation, vegetation cover, grain size, and slopes.
+
+Class Definitions
+1. Stable or Accreting
+   Coastal segment is generally stable or gaining sediment. Typical indicators include positive or near-zero shoreline change, balanced or positive sediment budget, relatively wide beach, and total water level proxy well below the dune crest.
+
+2. Low Susceptibility
+   Erosion is possible during stronger events, but the existing morphology and sediment conditions usually provide adequate resistance. Typical segments have modest exposure and limited chronic erosive signals.
+
+3. Moderate Susceptibility
+   Intermediate class where forcing and resistance are more balanced. Episodic retreat during storms is plausible, and one or more chronic stress indicators are present, but conditions are not yet severe.
+
+4. High Susceptibility
+   Segment shows clear erosive pressure. Storm water levels often approach the dune crest, the beach is commonly narrow to moderate in width, and chronic drivers such as negative shoreline change, sediment deficit, or elevated relative sea-level rise are usually present.
+
+5. Critical Erosion Hotspot
+   Segment is highly vulnerable to severe erosion. The storm impact proxy often exceeds dune crest elevation, chronic sediment deficit is strong, shoreline retreat is pronounced, and protective morphology is weak.
+
+Class Distribution
+- Stable or Accreting: 231 rows (19.25%)
+- Low Susceptibility: 314 rows (26.17%)
+- Moderate Susceptibility: 297 rows (24.75%)
+- High Susceptibility: 204 rows (17.0%)
+- Critical Erosion Hotspot: 154 rows (12.83%)
+
+Feature List
+1. Significant Wave Height (m)
+   Description: Representative offshore or nearshore significant wave height for the segment.
+   Unit: m
+   Expected range: 0.35 to 3.94
+
+2. Peak Wave Period (s)
+   Description: Dominant or peak wave period associated with the wave climate.
+   Unit: s
+   Expected range: 4.50 to 17.34
+
+3. Mean Spring Tidal Range (m)
+   Description: Typical spring tidal range for the shoreline setting.
+   Unit: m
+   Expected range: 0.20 to 5.74
+
+4. Extreme Storm Surge (m)
+   Description: Characteristic extreme storm surge elevation above mean sea level used as a forcing indicator.
+   Unit: m
+   Expected range: 0.08 to 2.83
+
+5. Beach Width (m)
+   Description: Horizontal width of the beach from the shoreline to the dune toe or backshore transition.
+   Unit: m
+   Expected range: 8.00 to 137.14
+
+6. Beach Face Slope (-)
+   Description: Dimensionless beach face or foreshore slope.
+   Unit: dimensionless
+   Expected range: 0.0150 to 0.0944
+
+7. Median Grain Size D50 (mm)
+   Description: Median sediment grain size of beach material.
+   Unit: mm
+   Expected range: 0.120 to 1.424
+
+8. Dune Crest Elevation (m)
+   Description: Elevation of the dune crest above mean sea level.
+   Unit: m
+   Expected range: 0.80 to 11.52
+
+9. Nearshore Bathymetric Slope (-)
+   Description: Dimensionless nearshore seabed slope controlling wave transformation and dissipation.
+   Unit: dimensionless
+   Expected range: 0.0042 to 0.0722
+
+10. Historical Shoreline Change Rate (m/yr)
+    Description: Long-term shoreline movement rate, with negative values indicating erosion and positive values indicating accretion.
+    Unit: m/yr
+    Expected range: -6.24 to 3.60
+
+11. Sediment Budget Balance (m3/m/yr)
+    Description: Estimated net alongshore or cross-shore sediment budget balance per unit shoreline length. Negative values indicate deficit.
+    Unit: m3/m/yr
+    Expected range: -24.09 to 22.00
+
+12. Vegetation Cover (%)
+    Description: Percentage of beach-dune-backshore segment covered by stabilizing vegetation.
+    Unit: %
+    Expected range: 0.0 to 85.8
+
+13. Relative Sea-Level Rise (mm/yr)
+    Description: Local relative sea-level rise trend that includes both ocean rise and vertical land motion effects.
+    Unit: mm/yr
+    Expected range: 0.80 to 10.19
+
+How the Synthetic Data Were Constructed
+The dataset was not produced by drawing independent random numbers. Instead, it was generated from a simplified engineering process model with physically meaningful dependencies.
+
+Generation concept
+- Each row represents a shoreline segment drawn from one of several latent coastal settings, including sheltered open coasts, mesotidal open coasts, exposed barrier coasts, low-relief deltaic coasts, and coarse reflective coasts.
+- Hydrodynamic variables were generated jointly so that higher wave exposure tends to produce larger significant wave heights, longer peak periods, and larger storm surges.
+- Median grain size was positively related to beach and nearshore slope to reflect the common association between coarser sediment and steeper equilibrium profiles.
+- Beach width and dune crest elevation were positively associated with morphological resilience and sediment availability, and negatively associated with strong exposure, storm surge, and subsidence-dominated settings.
+- Historical shoreline change rate depended on sediment budget balance, exposure, relative sea-level rise, and resilience.
+- Vegetation cover increased with wider and more stable segments, and decreased in severely eroding settings.
+- Relative sea-level rise was allowed to vary across settings to represent regional differences and local land motion.
+
+Engineering Logic Behind Class Assignment
+A continuous erosion-risk score was created from three engineering components:
+
+1. Acute storm impact component
+   A Stockdon-style wave runup proxy was calculated from significant wave height, peak wave period, and beach face slope.
+   A total water level proxy was then formed as:
+   total water proxy = extreme storm surge + 0.35 x mean spring tidal range + wave runup proxy
+   This proxy was compared with dune crest elevation to represent the likelihood that storm water levels approach or exceed the dune crest.
+
+2. Chronic erosion pressure component
+   The risk score increases for:
+   - more negative shoreline change rates,
+   - more negative sediment budget balance,
+   - larger relative sea-level rise,
+   - steeper nearshore slopes,
+   - lower tidal ranges in otherwise exposed settings.
+
+3. Resistance component
+   The risk score decreases for:
+   - wider beaches,
+   - higher vegetation cover,
+   - coarser sediment that generally supports steeper and more resistant beach profiles.
+
+Small stochastic variability was added to the final score so that class boundaries overlap naturally. A stability override was also used to ensure that the "Stable or Accreting" class primarily contains segments with favorable shoreline change and sediment budget conditions.
+
+Missing Data Strategy
+Missing data were inserted independently and randomly in each input feature column only. Missing values are represented by NaN. The target column contains no missing values.
+
+Exact missing percentages by input feature
+- Significant Wave Height (m): 8.0%
+- Peak Wave Period (s): 7.75%
+- Mean Spring Tidal Range (m): 6.17%
+- Extreme Storm Surge (m): 8.08%
+- Beach Width (m): 7.42%
+- Beach Face Slope (-): 8.0%
+- Median Grain Size D50 (mm): 8.25%
+- Dune Crest Elevation (m): 5.5%
+- Nearshore Bathymetric Slope (-): 5.58%
+- Historical Shoreline Change Rate (m/yr): 6.92%
+- Sediment Budget Balance (m3/m/yr): 7.08%
+- Vegetation Cover (%): 9.17%
+- Relative Sea-Level Rise (mm/yr): 8.33%
+
+Intended Educational Use
+This dataset is designed for beginner machine learning exercises in civil and coastal engineering, including:
+- exploratory data analysis and visualization,
+- handling missing data with deletion or imputation,
+- train-test splitting,
+- feature scaling and preprocessing,
+- comparison of multiclass classifiers such as multinomial logistic regression, decision trees, random forests, and support vector machines,
+- confusion matrices, precision, recall, F1 score, and class-wise evaluation,
+- feature importance and engineering interpretation.
+
+Assumptions
+- The dataset represents generic sandy shoreline segments rather than one named field site.
+- Values are intended to be realistic at the segment scale but are not a substitute for project-specific field surveys or design analyses.
+- The synthetic target is based on expert-style engineering judgment rather than regulatory thresholds from a single agency.
+- Anthropogenic interventions such as seawalls, groins, beach nourishment timing, or offshore breakwaters are not explicitly included as separate features, although their broad effects are indirectly reflected through morphology and sediment trend variables.
+- Missingness is completely random by design to make the dataset accessible for beginner preprocessing exercises.
+
+Reference Basis Used for Realism
+The variable definitions and ranges were informed by standard coastal engineering practice and by commonly used coastal vulnerability inputs, including wave height, tidal range, shoreline change, coastal slope, and relative sea-level change. Morphologic variables such as dune elevation, beach width, beach slope, and sediment grain size were included because they are widely used in storm impact and coastal change assessments. The dataset is synthetic and educational, but the parameter choices were intentionally chosen to stay within plausible engineering bounds.
