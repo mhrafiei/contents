@@ -1,0 +1,15 @@
+try:
+  from google.colab import runtime
+  import time
+  time.sleep(5)
+  runtime.unassign()
+except ImportError:
+  pass
+
+
+
+!mkdir -p ~/.keras/datasets/
+!if [ ! -f ~/.keras/datasets/cifar-10-batches-py-target_archive ]; then \
+    wget -q -O ~/.keras/datasets/cifar-10-batches-py-target_archive \
+    https://storage.googleapis.com/535743/datasets/cifar-10-python.tar.gz; \
+fi
