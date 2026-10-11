@@ -1,28 +1,26 @@
 #!/bin/bash
-
-# Exit script if any command fails
 set -e
 
-echo "Adding the google-drive-ocamlfuse PPA..."
-sudo add-apt-repository -y ppa:alessandro-strada/ppa
+echo "Creating local bin directory..."
+mkdir -p ~/.local/bin
 
-echo "Updating package lists..."
-sudo apt update
+echo "Downloading rclone..."
+cd /tmp
+wget -qO rclone.zip https://downloads.rclone.org/rclone-current-linux-amd64.zip
 
-echo "Installing google-drive-ocamlfuse..."
-sudo apt install -y google-drive-ocamlfuse
+echo "Extracting rclone binary..."
+unzip -q -j rclone.zip "*/rclone" -d ~/.local/bin/
 
-echo "Creating the mount directory at ~/GoogleDrive..."
-mkdir -p ~/GoogleDrive
+echo "Making rclone executable..."
+chmod +x ~/.local/bin/rclone
 
-echo "================================================="
-echo "Installation complete!"
-echo ""
-echo "Since you are on a remote terminal (headless), you must authenticate manually:"
-echo "1. Run this command to generate an auth link: google-drive-ocamlfuse -headless"
-echo "2. Copy the provided URL and open it in a web browser on your local machine."
-echo "3. Log into your Google account, allow access, and copy the verification code."
-echo "4. Paste the code back into your remote terminal."
-echo ""
-echo "Once authenticated, mount your drive by running: google-drive-ocamlfuse ~/GoogleDrive"
-echo "================================================="
+echo "Cleaning up..."
+rm rclone.zip
+
+echo "Adding ~/.local/bin to PATH in .bashrc..."
+if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' ~/.bashrc; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+fi
+export PATH="$HOME/.local/bin:$PATH"
+
+echo "Installation complete! Rclone is installed in ~/.local/bin/"
