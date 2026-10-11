@@ -107,7 +107,7 @@ echo "Upgrading pip, setuptools, and wheel..."
 
 echo "Installing course packages and TensorFlow CUDA dependencies..."
 "$PY" -I -m pip install \
-    numpy pandas matplotlib requests tqdm \
+    numpy pandas matplotlib requests tqdm ipykernel\
     "tensorflow[and-cuda]"
 
 echo "Checking package dependencies and recording installed versions..."
@@ -146,6 +146,8 @@ print("Result device:", result.device)
 if "GPU:0" not in result.device.upper():
     raise SystemExit("STOP: The test result is not on GPU:0.")
 PYTHON
+
+"$PY" -m ipykernel install --user --name=535743 --display-name="Python (535743)"
 
 echo
 echo "SUCCESS: Python $EXPECTED_VERSION, package checks, and GPU execution passed."
