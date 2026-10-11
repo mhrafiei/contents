@@ -11,7 +11,7 @@ export PATH="/opt/mprov/cloack/slurm/current/bin:$PATH"
 
 echo "vscode-jump: allocating job..." >&2
 
-exec salloc --partition=interactive_gpu --qos=class --account=en535743-ext-mrafiei1 --nodes=1 --ntasks=1 --cpus-per-task=10 --mem=32000M --gres=gpu:2g.20gb:1 --time=08:00:00 --comment=accept_cost --job-name=vscode \
+exec salloc --partition=interactive_gpu --qos=class --account=en535743-ext-mrafiei1 --nodes=1 --ntasks=1 --cpus-per-task=10 --mem=32000M --gres=gpu:2g.20gb:1 --time=04:00:00 --comment=accept_cost --job-name=vscode \
   /bin/bash -c '
     # Resolve the first allocated node (handles ranges like csr[048-050]).
     node="$(scontrol show hostnames "$SLURM_NODELIST" | head -1)"
