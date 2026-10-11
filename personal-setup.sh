@@ -14,7 +14,7 @@
 #         - open the login-node master session (password + OTP asked ONCE here)
 #         - install the public key onto your Skipjack login account
 #         - write the correct ~/.ssh/config entries for skipjack and skipjack-compute
-#         - create the GPU launcher script used by VS Code
+#         - create GPU-focused launcher scripts used by VS Code
 #         - configure the VS Code SSH timeout to avoid Slurm allocation timeouts
 #   4. The master session stays open in the background for 8 hours. After that
 #      (or after a reboot), open a local terminal and run:
@@ -22,7 +22,8 @@
 #      Enter your password and OTP once. Leave that session open.
 #   5. In VS Code, connect to the host named:
 #          skipjack-compute
-#      It allocates one GPU (--gres=gpu:1) on SKIPJACK_PARTITION.
+#      or the GPU-specific host:
+#          skipjack-gpu
 #   6. The default GPU partition is a100, but you can target other Skipjack GPU
 #      partitions by setting SKIPJACK_PARTITION before running the script, such as:
 #          SKIPJACK_PARTITION=h100 bash setup.sh
@@ -51,8 +52,8 @@
 # Important notes:
 #   - Do not run this from inside a Skipjack login shell unless you specifically
 #     want to modify remote configuration.
-#   - The `skipjack` host is the login host; the `skipjack-compute` entry is the
-#     actual compute-node target used by VS Code.
+#   - The `skipjack` host is the login host; the `skipjack-compute` and
+#     `skipjack-gpu` entries are the actual compute-node targets used by VS Code.
 #   - The base master session (`ssh skipjack`) authenticates the login-node hop
 #     only; compute-node authentication still uses ~/.ssh/id_skipjack.
 #   - All remote setup steps go through that one master session, so you enter
@@ -87,6 +88,8 @@ SKIPJACK_TIME="${SKIPJACK_TIME:-08:00:00}"
 SKIPJACK_CPUS="${SKIPJACK_CPUS:-12}"
 # Optional Slurm account override; leave empty for the default account from your cluster profile.
 SKIPJACK_ACCOUNT="${SKIPJACK_ACCOUNT:-}"
+# The fixed GPU host alias used for a dedicated GPU-targeted compute-node connection.
+SKIPJACK_GPU_HOST="skipjack-gpu"
 
 # ------------------------------------------------------------- platform ---
 OS_NAME="$(uname -s)"
@@ -210,17 +213,30 @@ Host skipjack
 EOF
 fi
 
-# Compute-node entry used by VS Code. Do not select `skipjack` itself in VS Code.
+# Compute-node entries used by VS Code. Do not select `skipjack` itself in VS Code.
 if ! has_host "skipjack-compute"; then
   cat >> "${SSH_CONFIG_PATH}" <<EOF
 
-# ==== Skipjack: allocated GPU compute node ====
+# ==== Skipjack: generic allocated compute node ====
 Host skipjack-compute
     User ${SKIPJACK_USERNAME}
     IdentityFile ${KEY_PATH}
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
     ProxyCommand ssh skipjack "~/vscode-jump.sh"
+EOF
+fi
+
+if ! has_host "${SKIPJACK_GPU_HOST}"; then
+  cat >> "${SSH_CONFIG_PATH}" <<EOF
+
+# ==== Skipjack: GPU-specific allocated compute node ====
+Host ${SKIPJACK_GPU_HOST}
+    User ${SKIPJACK_USERNAME}
+    IdentityFile ${KEY_PATH}
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh skipjack "~/vscode-gpu.sh"
 EOF
 fi
 
@@ -311,21 +327,21 @@ ssh -o StrictHostKeyChecking=accept-new skipjack true
 ssh skipjack "umask 077; mkdir -p ~/.ssh; touch ~/.ssh/authorized_keys; grep -qxF '${PUB_KEY}' ~/.ssh/authorized_keys || printf '%s\\n' '${PUB_KEY}' >> ~/.ssh/authorized_keys; chmod 700 ~/.ssh; chmod 600 ~/.ssh/authorized_keys"
 echo "Public key installed on Skipjack."
 
-# Generate the launcher used by the skipjack-compute ProxyCommand with
+# Generate the launcher scripts used by the ProxyCommand entries with
 # vscode_job.sh (on PATH in a login shell, or in /apps/helpers).
-# It requests one GPU, since skipjack-compute is the only compute host.
 JOB_ARGS="-p ${SKIPJACK_PARTITION} -t ${SKIPJACK_TIME} --cpus-per-task=${SKIPJACK_CPUS}${SKIPJACK_ACCOUNT:+ -A ${SKIPJACK_ACCOUNT}}"
 if ssh skipjack "bash -lc 'command -v vscode_job.sh >/dev/null 2>&1'"; then
   VSCODE_JOB="vscode_job.sh"
 else
   VSCODE_JOB="/apps/helpers/vscode_job.sh"
 fi
-ssh skipjack "bash -lc '${VSCODE_JOB} --out ~/vscode-jump.sh ${JOB_ARGS} --gres=gpu:1'"
-echo "Launcher written on Skipjack: ~/vscode-jump.sh"
+ssh skipjack "bash -lc '${VSCODE_JOB} --out ~/vscode-jump.sh ${JOB_ARGS}'"
+ssh skipjack "bash -lc '${VSCODE_JOB} --out ~/vscode-gpu.sh ${JOB_ARGS} --gres=gpu:1'"
+echo "Launchers written on Skipjack: ~/vscode-jump.sh and ~/vscode-gpu.sh"
 
-# Optionally copy a local launcher over the generated one, so the login node
-# runs the exact launcher you are testing. Uses the same master session.
-for launcher in vscode-jump.sh; do
+# Optionally copy local launcher files over the generated ones, so the login node
+# runs the exact launchers you are testing. Uses the same master session.
+for launcher in vscode-jump.sh vscode-gpu.sh; do
   if [[ -f "./${launcher}" ]]; then
     scp "./${launcher}" "skipjack:${launcher}"
     ssh skipjack "chmod +x ~/${launcher}"
@@ -340,9 +356,9 @@ printf 'Target GPU partition: %s\n' "${SKIPJACK_PARTITION}"
 printf 'Next steps:\n'
 printf '  1. The master session is already open for the next 8 hours. After that (or a reboot),\n'
 printf '     run in a local terminal: ssh skipjack   (enter password + OTP once, leave it open)\n'
-printf '  2. Open VS Code and connect to skipjack-compute\n'
+printf '  2. Open VS Code and connect to skipjack-compute or %s\n' "${SKIPJACK_GPU_HOST}"
 printf '  3. For other GPU types, set SKIPJACK_PARTITION to a100, h100, h200, b200, or b300, then rerun the script.\n'
 if [[ "${SETTINGS_OK}" != 1 ]]; then
   printf '  4. Add "remote.SSH.connectTimeout": 300 to your VS Code settings (see the warning above).\n'
 fi
-printf '\nThe local SSH config (%s) has the skipjack and skipjack-compute entries.\n' "${SSH_CONFIG_PATH}"
+printf '\nThe local SSH config (%s) has the skipjack, skipjack-compute and %s entries.\n' "${SSH_CONFIG_PATH}" "${SKIPJACK_GPU_HOST}"
