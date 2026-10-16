@@ -1,0 +1,8 @@
+*.zip
+*.mp4
+*.png
+*.jpg
+*.keras
+*.h5
+*.ipynb_checkpoints
+*.pyc
